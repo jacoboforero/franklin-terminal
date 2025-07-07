@@ -32,7 +32,17 @@ Political intelligence platform delivering personalized briefings based on user 
 git clone <repository-url>
 cd si-app
 npm install
-cd functions && npm install
+cd functions && npm install && cd ..
+```
+
+### Environment Setup
+
+```bash
+# Set up environment variables for both frontend and backend
+./setup-env.sh
+
+# Update the generated .env files with your actual API keys
+# See ENVIRONMENT_SETUP.md for detailed instructions
 ```
 
 ### Firebase Setup
@@ -46,7 +56,11 @@ firebase emulators:start
 ### Development
 
 ```bash
+# Start frontend (in one terminal)
 npm run dev
+
+# Start Firebase emulators (in another terminal)
+firebase emulators:start
 ```
 
 ## Project Structure
