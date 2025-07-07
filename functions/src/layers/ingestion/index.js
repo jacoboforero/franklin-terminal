@@ -9,18 +9,25 @@ const sources = require("./sources");
 const { validateArticle } = require("./sources/data-schema");
 
 /**
- * Fetch articles from all configured sources
+ * Fetch articles from all configured sources using user intelligence queries
+ * @param {Object} sourceQueries - Queries from user intelligence layer
  * @returns {Promise<Array>} Array of standardized articles
  */
-async function fetchAllSources() {
+async function fetchFromSources(sourceQueries) {
   const allArticles = [];
 
   try {
-    // Fetch from each source
-    for (const [sourceName, handler] of Object.entries(sources)) {
+    // Fetch from each source using targeted queries
+    for (const [sourceName, queryParams] of Object.entries(sourceQueries)) {
+      const handler = sources[sourceName];
+      if (!handler) {
+        console.warn(`No handler found for source: ${sourceName}`);
+        continue;
+      }
+
       try {
-        console.log(`Fetching from ${sourceName}...`);
-        const rawArticles = await handler.fetchRawArticles();
+        console.log(`Fetching from ${sourceName} with query:`, queryParams);
+        const rawArticles = await handler.fetchRawArticles(queryParams);
 
         // Transform each raw article to standardized format
         const standardizedArticles = rawArticles
@@ -60,17 +67,18 @@ async function fetchAllSources() {
 }
 
 /**
- * Fetch articles from a specific source
+ * Fetch articles from a specific source with query parameters
  * @param {string} sourceName - Name of the source
+ * @param {Object} queryParams - Query parameters for the source
  * @returns {Promise<Array>} Array of standardized articles
  */
-async function fetchFromSource(sourceName) {
+async function fetchFromSource(sourceName, queryParams = {}) {
   const handler = sources[sourceName];
   if (!handler) {
     throw new Error(`Unknown source: ${sourceName}`);
   }
 
-  const rawArticles = await handler.fetchRawArticles();
+  const rawArticles = await handler.fetchRawArticles(queryParams);
   return rawArticles.map((rawArticle) => handler.transform(rawArticle));
 }
 
@@ -92,7 +100,7 @@ function validateSingleArticle(article) {
 }
 
 module.exports = {
-  fetchAllSources,
+  fetchFromSources,
   fetchFromSource,
   getAvailableSources,
   validateSingleArticle,

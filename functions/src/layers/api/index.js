@@ -55,8 +55,45 @@ async function getUserProfile(userId) {
   };
 }
 
+/**
+ * Prepare API response from processed content
+ * @param {Object} processingResult - Result from processing layer
+ * @returns {Promise<Object>} Formatted API response
+ */
+async function prepareResponse(processingResult) {
+  // TODO: Implement response formatting
+  console.log("Preparing API response from processing result");
+
+  return {
+    briefings: processingResult.articles || [],
+    timestamp: new Date().toISOString(),
+    totalArticles: processingResult.totalArticles || 0,
+    processedAt: processingResult.processedAt,
+  };
+}
+
+/**
+ * Prepare user-specific response
+ * @param {Object} processedData - Processed data
+ * @param {Object} userProfile - User profile
+ * @returns {Promise<Object>} User-specific response
+ */
+async function prepareUserResponse(processedData, userProfile) {
+  // TODO: Implement user-specific response formatting
+  console.log("Preparing user-specific response");
+
+  return {
+    userId: userProfile.id,
+    briefings: processedData.articles || [],
+    timestamp: new Date().toISOString(),
+    userSegment: "general", // TODO: Get from user intelligence
+  };
+}
+
 module.exports = {
   validateBriefingRequest,
   searchArticles,
   getUserProfile,
+  prepareResponse,
+  prepareUserResponse,
 };

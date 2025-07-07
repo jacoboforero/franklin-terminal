@@ -22,13 +22,25 @@ class BaseHandler {
   }
 
   /**
-   * Fetch articles from the source
+   * Fetch raw articles from the source
    * Must be implemented by each source handler
-   * @param {Object} options - Source-specific options
-   * @returns {Promise<Array>} Array of standardized articles
+   * @param {Object} queryParams - Query parameters from user intelligence layer
+   * @returns {Promise<Array>} Array of raw articles from source
    */
-  async fetch(options = {}) {
-    throw new Error("fetch() method must be implemented by source handler");
+  async fetchRawArticles(queryParams = {}) {
+    throw new Error(
+      "fetchRawArticles() method must be implemented by source handler"
+    );
+  }
+
+  /**
+   * Transform raw article to standardized format
+   * Must be implemented by each source handler
+   * @param {Object} rawArticle - Raw article from source
+   * @returns {Object} Standardized article
+   */
+  transform(rawArticle) {
+    throw new Error("transform() method must be implemented by source handler");
   }
 
   /**

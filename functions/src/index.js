@@ -18,39 +18,50 @@ const storageLayer = require("./layers/storage");
 const functions = require("firebase-functions");
 
 /**
- * Main function to process articles through the pipeline
- * This demonstrates the flow: Ingestion → Processing → Storage
+ * Scheduled function to process articles through the pipeline
+ * This demonstrates the flow: User Intelligence → Ingestion → Processing → Storage
  */
 exports.processArticles = functions.pubsub
   .schedule("every 1 hours")
   .onRun(async (context) => {
     try {
-      console.log("Starting article processing pipeline...");
+      console.log("Starting scheduled article processing pipeline...");
 
-      // Step 1: Ingestion Layer - Fetch articles from all sources
-      const rawArticles = await ingestionLayer.fetchAllSources();
-      console.log(`Fetched ${rawArticles.length} raw articles`);
+      // Get all active user profiles for batch processing
+      // TODO: Implement user profile retrieval for batch processing
+      const mockUserProfiles = [
+        {
+          id: "batch-user-1",
+          name: "Batch User 1",
+          regions: ["North America"],
+          topics: ["Economic Policy"],
+          expertise: "Intermediate",
+          timeAvailable: "10-20 minutes",
+        },
+      ];
 
-      // Step 2: Processing Layer - Process and score articles
-      const processedArticles = await processingLayer.processArticles(
-        rawArticles
-      );
-      console.log(`Processed ${processedArticles.length} articles`);
+      // Use the full pipeline with user intelligence
+      const result = await processBriefingPipeline(mockUserProfiles);
 
-      // Step 3: Storage Layer - Store processed articles
-      await storageLayer.storeArticles(processedArticles);
-      console.log("Articles stored successfully");
-
-      return { success: true, articlesProcessed: processedArticles.length };
+      if (result.success) {
+        console.log("Scheduled processing completed successfully");
+        return {
+          success: true,
+          articlesProcessed: result.metrics.articlesProcessed,
+        };
+      } else {
+        console.error("Scheduled processing failed:", result.error);
+        throw new Error(result.error);
+      }
     } catch (error) {
-      console.error("Error in article processing pipeline:", error);
+      console.error("Error in scheduled article processing pipeline:", error);
       throw error;
     }
   });
 
 /**
  * API endpoint to get user-specific briefings
- * This demonstrates the flow: API → Storage → Processing
+ * This demonstrates the flow: User Intelligence → Ingestion → Processing → API → Storage
  */
 exports.getUserBriefing = functions.https.onCall(async (data, context) => {
   try {
@@ -70,16 +81,17 @@ exports.getUserBriefing = functions.https.onCall(async (data, context) => {
     // Step 2: Storage Layer - Get user profile and preferences
     const userProfile = await storageLayer.getUserProfile(userId);
 
-    // Step 3: Processing Layer - Generate personalized briefing
-    const briefing = await processingLayer.generateBriefing(
-      userProfile,
-      request
-    );
+    // Step 3: Use the full pipeline with user intelligence
+    const result = await processSingleUserBriefing(userProfile);
 
-    // Step 4: Storage Layer - Store briefing for history
-    await storageLayer.storeBriefing(userId, briefing);
-
-    return briefing;
+    if (result.success) {
+      return result.data;
+    } else {
+      throw new functions.https.HttpsError(
+        "internal",
+        result.error || "Failed to generate briefing"
+      );
+    }
   } catch (error) {
     console.error("Error generating user briefing:", error);
     throw new functions.https.HttpsError(
@@ -110,9 +122,36 @@ exports.health = functions.https.onRequest((req, res) => {
  * Only available in development environment
  */
 if (process.env.NODE_ENV === "development") {
+  exports.testUserIntelligence = functions.https.onRequest(async (req, res) => {
+    try {
+      const mockUserProfiles = [
+        {
+          id: "test-user-1",
+          name: "Test User",
+          regions: ["North America"],
+          topics: ["Technology Regulation"],
+          expertise: "Advanced",
+          timeAvailable: "20-30 minutes",
+        },
+      ];
+
+      const result = await userIntelligence.processUserIntelligence(
+        mockUserProfiles
+      );
+      res.json({ success: true, sourceQueries: result.sourceQueries });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   exports.testIngestion = functions.https.onRequest(async (req, res) => {
     try {
-      const articles = await ingestionLayer.fetchAllSources();
+      const mockQueries = {
+        reuters: { category: "technology", limit: 5 },
+        newsapi: { category: "technology", pageSize: 5 },
+      };
+
+      const articles = await ingestionLayer.fetchFromSources(mockQueries);
       res.json({ success: true, articles: articles.length });
     } catch (error) {
       res.status(500).json({ error: error.message });

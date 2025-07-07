@@ -11,7 +11,6 @@
 // - See the README for input/output schemas.
 // - Do NOT add any real analysis logic here until you have reviewed the user profile structure.
 //
-// For questions, contact the backend lead or check the architecture docs.
 
 /**
  * Extract searchable preferences from user profile

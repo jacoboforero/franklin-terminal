@@ -34,6 +34,14 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
+│                 USER INTELLIGENCE LAYER                     │
+│  • User profile analysis                                     │
+│  • Query generation for sources                              │
+│  • Preference aggregation                                    │
+│  • Query caching & optimization                              │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
 │                     STORAGE LAYER                           │
 │  • Firestore database operations                             │
 │  • Redis caching                                             │
@@ -43,11 +51,19 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 
 ## Layer Responsibilities
 
+### 0. User Intelligence Layer (`/user-intelligence/`)
+
+**Purpose**: Analyze user profiles and generate targeted queries
+
+- **Input**: User profiles from quiz
+- **Output**: Source-specific query parameters
+- **Key Files**: `profile-analyzer.js`, `query-builder.js`, `preference-aggregator.js`
+
 ### 1. Ingestion Layer (`/ingestion/`)
 
 **Purpose**: Fetch and standardize data from external sources
 
-- **Input**: External APIs, RSS feeds, data sources
+- **Input**: Query parameters from user intelligence layer
 - **Output**: Standardized articles in consistent format
 - **Key Files**: `data-schema.js`, source handlers, `base-handler.js`
 
@@ -78,9 +94,9 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 ## Data Flow
 
 ```
-External Sources → Ingestion → Processing → API → Frontend
-                                    ↓
-                                Storage ←→ All Layers
+User Profiles → User Intelligence → Ingestion → Processing → API → Frontend
+                    ↓                    ↓           ↓         ↓
+                Query Cache ←→ External Sources ←→ Storage ←→ All Layers
 ```
 
 ## Development Guidelines
@@ -105,24 +121,27 @@ External Sources → Ingestion → Processing → API → Frontend
 
 ## Current Status
 
-| Layer      | Status          | Next Steps               |
-| ---------- | --------------- | ------------------------ |
-| Ingestion  | ✅ Architecture | 🔄 Source implementation |
-| Processing | ⏳ Architecture | ⏳ Implementation        |
-| API        | ⏳ Architecture | ⏳ Implementation        |
-| Storage    | ⏳ Architecture | ⏳ Implementation        |
+| Layer             | Status          | Next Steps               |
+| ----------------- | --------------- | ------------------------ |
+| User Intelligence | ✅ Architecture | 🔄 Implementation        |
+| Ingestion         | ✅ Architecture | 🔄 Source implementation |
+| Processing        | ✅ Architecture | 🔄 Implementation        |
+| API               | ✅ Architecture | 🔄 Implementation        |
+| Storage           | ✅ Architecture | 🔄 Implementation        |
 
 ## Getting Started
 
-1. **Start with Ingestion Layer**: Implement source handlers
-2. **Add Processing Layer**: Build relevance scoring
-3. **Create API Layer**: Build REST endpoints
-4. **Setup Storage Layer**: Configure databases
+1. **Start with User Intelligence Layer**: Implement profile analysis and query generation
+2. **Implement Ingestion Layer**: Build source handlers with query parameters
+3. **Add Processing Layer**: Build relevance scoring and content analysis
+4. **Create API Layer**: Build REST endpoints and response formatting
+5. **Setup Storage Layer**: Configure databases and caching
 
 ## File Structure
 
 ```
 src/layers/
+├── user-intelligence/ # User intelligence (Layer 0)
 ├── ingestion/         # Data ingestion (Layer 1)
 ├── processing/        # Data processing (Layer 2)
 ├── api/              # API serving (Layer 3)

@@ -25,6 +25,24 @@ async function processArticles(articles) {
 }
 
 /**
+ * Process content from ingestion layer (alias for processArticles)
+ * @param {Object} ingestionResult - Result from ingestion layer
+ * @returns {Promise<Object>} Processed content with articles
+ */
+async function processContent(ingestionResult) {
+  // Extract articles from ingestion result
+  const articles = Array.isArray(ingestionResult) ? ingestionResult : [];
+
+  const processedArticles = await processArticles(articles);
+
+  return {
+    articles: processedArticles,
+    processedAt: new Date().toISOString(),
+    totalArticles: processedArticles.length,
+  };
+}
+
+/**
  * Generate personalized briefing for a user
  * @param {Object} userProfile - User profile and preferences
  * @param {Object} request - Briefing request parameters
@@ -56,6 +74,7 @@ async function scoreArticleRelevance(article, userProfile) {
 
 module.exports = {
   processArticles,
+  processContent,
   generateBriefing,
   scoreArticleRelevance,
 };

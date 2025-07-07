@@ -69,9 +69,45 @@ async function getArticles(filters = {}) {
   return [];
 }
 
+/**
+ * Store results from the pipeline
+ * @param {Object} apiResult - Result from API layer
+ * @returns {Promise<void>}
+ */
+async function storeResults(apiResult) {
+  // TODO: Implement result storage
+  console.log("Storing results from API layer");
+
+  if (apiResult.briefings) {
+    await storeArticles(apiResult.briefings);
+  }
+}
+
+/**
+ * Store user-specific results
+ * @param {Object} userResponse - User response from API layer
+ * @param {string} userId - User ID
+ * @returns {Promise<void>}
+ */
+async function storeUserResults(userResponse, userId) {
+  // TODO: Implement user result storage
+  console.log(`Storing user results for ${userId}`);
+
+  if (userResponse.briefings) {
+    await storeBriefing(userId, {
+      id: `briefing-${Date.now()}`,
+      articles: userResponse.briefings,
+      timestamp: userResponse.timestamp,
+      userSegment: userResponse.userSegment,
+    });
+  }
+}
+
 module.exports = {
   storeArticles,
   getUserProfile,
   storeBriefing,
   getArticles,
+  storeResults,
+  storeUserResults,
 };
