@@ -42,19 +42,12 @@ Variables needed by Firebase Functions:
 ```bash
 # API Keys for data sources
 NEWSAPI_API_KEY=your_newsapi_key_here
-FRED_API_KEY=your_fred_api_key_here
-REUTERS_API_KEY=your_reuters_api_key_here
 
 # Source configuration
 NEWSAPI_BASE_URL=https://newsapi.org/v2
-FRED_BASE_URL=https://api.stlouisfed.org/fred
-POLITICO_RSS_URL=https://www.politico.com/rss/politicopicks.xml
-BLOOMBERG_RSS_URL=https://feeds.bloomberg.com/politics/news.rss
 
 # Rate limits and timeouts
 NEWSAPI_RATE_LIMIT=1000
-FRED_RATE_LIMIT=120
-REUTERS_RATE_LIMIT=1000
 
 # General settings
 NODE_ENV=development
@@ -89,19 +82,12 @@ VITE_APP_VERSION=1.0.0
 ```bash
 # Copy from functions/env.example and fill in your values
 NEWSAPI_API_KEY=your_newsapi_key_here
-FRED_API_KEY=your_fred_api_key_here
-REUTERS_API_KEY=your_reuters_api_key_here
 
 # Source configuration
 NEWSAPI_BASE_URL=https://newsapi.org/v2
-FRED_BASE_URL=https://api.stlouisfed.org/fred
-POLITICO_RSS_URL=https://www.politico.com/rss/politicopicks.xml
-BLOOMBERG_RSS_URL=https://feeds.bloomberg.com/politics/news.rss
 
 # Rate limits and timeouts
 NEWSAPI_RATE_LIMIT=1000
-FRED_RATE_LIMIT=120
-REUTERS_RATE_LIMIT=1000
 
 # General settings
 NODE_ENV=development
@@ -118,7 +104,6 @@ For production deployment, set environment variables in Firebase:
 ```bash
 # Set environment variables for Firebase Functions
 firebase functions:config:set newsapi.key="your_newsapi_key"
-firebase functions:config:set fred.key="your_fred_api_key"
 firebase functions:config:set general.environment="production"
 ```
 
@@ -147,9 +132,6 @@ firebase functions:config:set general.environment="production"
 ### **Backend (.env in functions/)**
 
 - [ ] NewsAPI key (required)
-- [ ] FRED API key (required)
-- [ ] Reuters API key (optional)
-- [ ] RSS feed URLs
 - [ ] Rate limits and timeouts
 - [ ] General configuration
 
@@ -157,7 +139,7 @@ firebase functions:config:set general.environment="production"
 
 - [ ] Set Firebase Functions config variables
 - [ ] Verify environment validation passes
-- [ ] Test all data sources work
+- [ ] Test NewsAPI integration works
 
 ## 🚨 **Important Notes**
 

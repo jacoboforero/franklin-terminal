@@ -86,49 +86,15 @@ if [ "$create_backend_env" = true ]; then
 # NewsAPI (Required - Free tier available)
 NEWSAPI_API_KEY=your_newsapi_key_here
 
-# FRED API (Required - Free tier available)
-FRED_API_KEY=your_fred_api_key_here
-
-# ===============================
-# OPTIONAL API KEYS
-# ===============================
-
-# Reuters API (Optional - Paid service)
-REUTERS_API_KEY=your_reuters_api_key_here
-
 # ===============================
 # SOURCE CONFIGURATION
 # ===============================
-
-# Reuters Configuration
-REUTERS_BASE_URL=https://api.reuters.com
-REUTERS_RATE_LIMIT=1000
-REUTERS_TIMEOUT=30000
-REUTERS_RETRY_ATTEMPTS=3
 
 # NewsAPI Configuration
 NEWSAPI_BASE_URL=https://newsapi.org/v2
 NEWSAPI_RATE_LIMIT=1000
 NEWSAPI_TIMEOUT=30000
 NEWSAPI_RETRY_ATTEMPTS=3
-
-# Politico RSS Configuration
-POLITICO_RSS_URL=https://www.politico.com/rss/politicopicks.xml
-POLITICO_TIMEOUT=30000
-POLITICO_RETRY_ATTEMPTS=3
-POLITICO_UPDATE_INTERVAL=7200000
-
-# FRED API Configuration
-FRED_BASE_URL=https://api.stlouisfed.org/fred
-FRED_RATE_LIMIT=120
-FRED_TIMEOUT=30000
-FRED_RETRY_ATTEMPTS=3
-
-# Bloomberg RSS Configuration
-BLOOMBERG_RSS_URL=https://feeds.bloomberg.com/politics/news.rss
-BLOOMBERG_TIMEOUT=30000
-BLOOMBERG_RETRY_ATTEMPTS=3
-BLOOMBERG_UPDATE_INTERVAL=3600000
 
 # ===============================
 # GENERAL CONFIGURATION
@@ -157,11 +123,7 @@ FIREBASE_STORAGE_BUCKET=si-terminal.appspot.com
 # ===============================
 
 # Enable/disable sources for development
-ENABLE_REUTERS=false
 ENABLE_NEWSAPI=true
-ENABLE_POLITICO=true
-ENABLE_FRED=true
-ENABLE_BLOOMBERG=true
 
 # Debug settings
 DEBUG_MODE=false
@@ -178,9 +140,8 @@ echo ""
 echo "📋 Next steps:"
 echo "   1. Get your Firebase configuration from Firebase Console"
 echo "   2. Sign up for NewsAPI (free): https://newsapi.org/"
-echo "   3. Sign up for FRED API (free): https://fred.stlouisfed.org/docs/api/"
-echo "   4. Update the .env files with your actual values"
-echo "   5. Test the setup with: npm run dev (frontend) and firebase emulators:start (backend)"
+echo "   3. Update the .env files with your actual values"
+echo "   4. Test the setup with: npm run dev (frontend) and firebase emulators:start (backend)"
 echo ""
 echo "📚 For detailed instructions, see:"
 echo "   • ENVIRONMENT_SETUP.md"

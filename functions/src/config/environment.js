@@ -1,22 +1,13 @@
 // ===============================
-// ENVIRONMENT CONFIGURATION
+// ENVIRONMENT CONFIGURATION (NewsAPI Only)
 // ===============================
 // This file manages all environment variables and API configurations
 // for the Franklin Terminal data pipeline.
 
 /**
- * Environment configuration for all data sources
+ * Environment configuration for NewsAPI
  */
 const ENV_CONFIG = {
-  // Reuters API Configuration
-  REUTERS: {
-    API_KEY: process.env.REUTERS_API_KEY,
-    BASE_URL: process.env.REUTERS_BASE_URL || "https://api.reuters.com",
-    RATE_LIMIT: parseInt(process.env.REUTERS_RATE_LIMIT) || 1000, // requests per hour
-    TIMEOUT: parseInt(process.env.REUTERS_TIMEOUT) || 30000, // milliseconds
-    RETRY_ATTEMPTS: parseInt(process.env.REUTERS_RETRY_ATTEMPTS) || 3,
-  },
-
   // NewsAPI Configuration
   NEWSAPI: {
     API_KEY: process.env.NEWSAPI_API_KEY,
@@ -24,35 +15,6 @@ const ENV_CONFIG = {
     RATE_LIMIT: parseInt(process.env.NEWSAPI_RATE_LIMIT) || 1000, // requests per day
     TIMEOUT: parseInt(process.env.NEWSAPI_TIMEOUT) || 30000,
     RETRY_ATTEMPTS: parseInt(process.env.NEWSAPI_RETRY_ATTEMPTS) || 3,
-  },
-
-  // Politico RSS Configuration
-  POLITICO: {
-    RSS_URL:
-      process.env.POLITICO_RSS_URL ||
-      "https://www.politico.com/rss/politicopicks.xml",
-    TIMEOUT: parseInt(process.env.POLITICO_TIMEOUT) || 30000,
-    RETRY_ATTEMPTS: parseInt(process.env.POLITICO_RETRY_ATTEMPTS) || 3,
-    UPDATE_INTERVAL: parseInt(process.env.POLITICO_UPDATE_INTERVAL) || 7200000, // 2 hours
-  },
-
-  // FRED API Configuration
-  FRED: {
-    API_KEY: process.env.FRED_API_KEY,
-    BASE_URL: process.env.FRED_BASE_URL || "https://api.stlouisfed.org/fred",
-    RATE_LIMIT: parseInt(process.env.FRED_RATE_LIMIT) || 120, // requests per minute
-    TIMEOUT: parseInt(process.env.FRED_TIMEOUT) || 30000,
-    RETRY_ATTEMPTS: parseInt(process.env.FRED_RETRY_ATTEMPTS) || 3,
-  },
-
-  // Bloomberg Configuration
-  BLOOMBERG: {
-    RSS_URL:
-      process.env.BLOOMBERG_RSS_URL ||
-      "https://feeds.bloomberg.com/politics/news.rss",
-    TIMEOUT: parseInt(process.env.BLOOMBERG_TIMEOUT) || 30000,
-    RETRY_ATTEMPTS: parseInt(process.env.BLOOMBERG_RETRY_ATTEMPTS) || 3,
-    UPDATE_INTERVAL: parseInt(process.env.BLOOMBERG_UPDATE_INTERVAL) || 3600000, // 1 hour
   },
 
   // General Configuration
@@ -83,9 +45,7 @@ function validateEnvironment() {
 
   // Check required API keys
   const requiredKeys = [
-    { source: "REUTERS", key: "REUTERS.API_KEY", required: false },
     { source: "NEWSAPI", key: "NEWSAPI.API_KEY", required: true },
-    { source: "FRED", key: "FRED.API_KEY", required: true },
   ];
 
   for (const { source, key, required } of requiredKeys) {
@@ -123,8 +83,8 @@ function validateEnvironment() {
 }
 
 /**
- * Get configuration for a specific source
- * @param {string} sourceName - Source name (REUTERS, NEWSAPI, etc.)
+ * Get configuration for NewsAPI
+ * @param {string} sourceName - Source name (NEWSAPI)
  * @returns {Object} Source configuration
  */
 function getSourceConfig(sourceName) {
@@ -136,20 +96,13 @@ function getSourceConfig(sourceName) {
 }
 
 /**
- * Check if a source is enabled (has required configuration)
+ * Check if NewsAPI is enabled (has required configuration)
  * @param {string} sourceName - Source name
  * @returns {boolean} True if source is enabled
  */
 function isSourceEnabled(sourceName) {
   try {
     const config = getSourceConfig(sourceName);
-
-    // For RSS sources, only need URL
-    if (sourceName === "POLITICO" || sourceName === "BLOOMBERG") {
-      return !!config.RSS_URL;
-    }
-
-    // For API sources, need API key
     return !!config.API_KEY;
   } catch (error) {
     return false;
@@ -161,7 +114,7 @@ function isSourceEnabled(sourceName) {
  * @returns {Array} Array of enabled source names
  */
 function getEnabledSources() {
-  const sources = ["REUTERS", "NEWSAPI", "POLITICO", "FRED", "BLOOMBERG"];
+  const sources = ["NEWSAPI"];
   return sources.filter((source) => isSourceEnabled(source));
 }
 
@@ -170,7 +123,7 @@ function getEnabledSources() {
  * @returns {Array} Array of disabled source names
  */
 function getDisabledSources() {
-  const sources = ["REUTERS", "NEWSAPI", "POLITICO", "FRED", "BLOOMBERG"];
+  const sources = ["NEWSAPI"];
   return sources.filter((source) => !isSourceEnabled(source));
 }
 

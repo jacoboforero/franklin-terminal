@@ -40,7 +40,7 @@ async function getUserProfile(userId) {
       { name: "Personal Values", weight: 0.3 },
     ],
     preferences: {
-      sources: ["Reuters", "NewsAPI"],
+      sources: ["NewsAPI"],
       categories: ["Economic Policy", "Technology Regulation"],
     },
   };

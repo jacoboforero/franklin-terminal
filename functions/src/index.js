@@ -177,7 +177,6 @@ if (process.env.NODE_ENV === "development") {
   exports.testIngestion = functions.https.onRequest(async (req, res) => {
     try {
       const mockQueries = {
-        reuters: { category: "technology", limit: 5 },
         newsapi: { category: "technology", pageSize: 5 },
       };
 

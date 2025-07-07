@@ -32,7 +32,7 @@ Franklin Terminal uses a **5-layer architecture** that works cohesively to deliv
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
 │                    INGESTION LAYER (Layer 1)                │
-│  • Source handlers (Reuters, NewsAPI, Politico, etc.)       │
+│  • NewsAPI handler (MVP)                                    │
 │  • Query-driven data fetching                                │
 │  • Raw data transformation                                   │
 │  • Standardized output format                                │
@@ -41,7 +41,7 @@ Franklin Terminal uses a **5-layer architecture** that works cohesively to deliv
 ┌─────────────────────▼───────────────────────────────────────┐
 │                 USER INTELLIGENCE LAYER (Layer 0)           │
 │  • User profile analysis                                     │
-│  • Query generation for sources                              │
+│  • Query generation for NewsAPI                              │
 │  • Preference aggregation                                    │
 │  • Query caching & optimization                              │
 └─────────────────────┬───────────────────────────────────────┘
@@ -66,17 +66,17 @@ Quiz Completion → User Profile Service → Firestore Storage
 ### 2. Briefing Generation Pipeline (Complete Flow)
 
 ```
-User Profile → User Intelligence → Ingestion → Processing → API → Storage → Frontend
+User Profile → User Intelligence → Ingestion (NewsAPI) → Processing → API → Storage → Frontend
      ↓              ↓                ↓           ↓         ↓       ↓         ↓
-Quiz Results → Query Generation → API Calls → Analysis → Response → Database → Dashboard
+Quiz Results → Query Generation → NewsAPI → Analysis → Response → Database → Dashboard
 ```
 
 ### 3. Real-time User Briefing
 
 ```
-Single User → User Intelligence → Ingestion → Processing → API → Storage
+Single User → User Intelligence → Ingestion (NewsAPI) → Processing → API → Storage
      ↓              ↓                ↓           ↓         ↓       ↓
-User Profile → Query Generation → API Calls → Analysis → Response → Database
+User Profile → Query Generation → NewsAPI → Analysis → Response → Database
 ```
 
 ## Layer Integration Details
@@ -84,7 +84,7 @@ User Profile → Query Generation → API Calls → Analysis → Response → Da
 ### Layer 0: User Intelligence → Layer 1: Ingestion
 
 - **Input**: User profiles with stake areas, regions, topics, expertise
-- **Output**: Source-specific query parameters
+- **Output**: NewsAPI query parameters
 - **Integration**: `userIntelligence.processUserIntelligence()` → `ingestion.fetchFromSources()`
 
 **Example Flow**:
@@ -92,7 +92,6 @@ User Profile → Query Generation → API Calls → Analysis → Response → Da
 ```javascript
 // User Intelligence generates targeted queries
 const queries = {
-  reuters: { category: "technology", keywords: ["AI"], limit: 50 },
   newsapi: {
     q: "artificial intelligence",
     category: "technology",
@@ -101,12 +100,12 @@ const queries = {
 };
 
 // Ingestion uses queries to fetch only relevant content
-const articles = await ingestion.fetchFromSources(queries);
+const articles = await ingestion.fetchFromSources(queries.newsapi);
 ```
 
 ### Layer 1: Ingestion → Layer 2: Processing
 
-- **Input**: Raw articles from external sources
+- **Input**: Raw articles from NewsAPI
 - **Output**: Standardized articles in consistent format
 - **Integration**: `ingestion.fetchFromSources()` → `processing.processContent()`
 
@@ -150,14 +149,14 @@ All layers use consistent function names:
 ### 4. Caching Strategy
 
 - User Intelligence: Query result caching
-- Ingestion: Source data caching
+- Ingestion: NewsAPI data caching
 - Storage: Database and Redis caching
 
 ## Efficiency Benefits
 
 ### 1. 90% Data Reduction
 
-- **Without User Intelligence**: Fetch ALL articles from ALL sources
+- **Without User Intelligence**: Fetch ALL articles from NewsAPI
 - **With User Intelligence**: Fetch only relevant articles using targeted queries
 
 ### 2. Scalable Architecture
@@ -174,13 +173,13 @@ All layers use consistent function names:
 
 ## Development Status
 
-| Layer             | Status          | Integration | Next Steps               |
-| ----------------- | --------------- | ----------- | ------------------------ |
-| User Intelligence | ✅ Architecture | ✅ Complete | 🔄 Implementation        |
-| Ingestion         | ✅ Architecture | ✅ Complete | 🔄 Source implementation |
-| Processing        | ✅ Architecture | ✅ Complete | 🔄 Implementation        |
-| API               | ✅ Architecture | ✅ Complete | 🔄 Implementation        |
-| Storage           | ✅ Architecture | ✅ Complete | 🔄 Implementation        |
+| Layer             | Status          | Integration | Next Steps                |
+| ----------------- | --------------- | ----------- | ------------------------- |
+| User Intelligence | ✅ Architecture | ✅ Complete | 🔄 Implementation         |
+| Ingestion         | ✅ Architecture | ✅ Complete | 🔄 NewsAPI implementation |
+| Processing        | ✅ Architecture | ✅ Complete | 🔄 Implementation         |
+| API               | ✅ Architecture | ✅ Complete | 🔄 Implementation         |
+| Storage           | ✅ Architecture | ✅ Complete | 🔄 Implementation         |
 
 ## Testing Integration
 
@@ -209,7 +208,7 @@ All layers use consistent function names:
 ## Next Implementation Steps
 
 1. **User Intelligence Layer**: Implement profile analysis and query generation logic
-2. **Ingestion Layer**: Implement source handlers with query parameter support
+2. **Ingestion Layer**: Implement NewsAPI handler with query parameter support
 3. **Processing Layer**: Implement relevance scoring and content analysis
 4. **API Layer**: Implement request validation and response formatting
 5. **Storage Layer**: Implement database operations and caching

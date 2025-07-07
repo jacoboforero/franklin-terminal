@@ -1,19 +1,15 @@
-# Ingestion Layer
+# Ingestion Layer (NewsAPI Only)
 
 ## Overview
 
-The ingestion layer is responsible for fetching raw data from external sources and transforming it into our standardized format. This is the **first layer** in the Franklin Terminal data pipeline.
+The ingestion layer is responsible for fetching raw data from NewsAPI and transforming it into our standardized format. This is the **first layer** in the Franklin Terminal data pipeline.
 
 ## Architecture
 
 ```
 ingestion/
 ├── sources/           # Data source handlers
-│   ├── reuters/      # Reuters API/RSS handler
 │   ├── newsapi/      # NewsAPI handler
-│   ├── politico/     # Politico RSS handler
-│   ├── fred/         # FRED API handler
-│   ├── bloomberg/    # Bloomberg RSS handler
 │   ├── base-handler.js    # Base handler class
 │   ├── data-schema.js     # Standardized article schema
 │   └── index.js           # Source registry
@@ -22,14 +18,14 @@ ingestion/
 
 ## Purpose
 
-- **Fetch**: Retrieve raw data from external APIs, RSS feeds, and other sources
+- **Fetch**: Retrieve raw data from NewsAPI
 - **Transform**: Convert raw data into our standardized article format
 - **Validate**: Ensure data conforms to our schema before passing to next layer
 
 ## Data Flow
 
 ```
-External Sources → Ingestion Layer → Processing Layer → API Layer → Storage Layer
+NewsAPI → Ingestion Layer → Processing Layer → API Layer → Storage Layer
 ```
 
 ## Standardized Output
@@ -61,7 +57,7 @@ The ingestion layer passes standardized articles to the processing layer, which 
 ## Development Status
 
 - ✅ Data schema defined
-- ✅ Source handlers created (skeletons)
+- ✅ NewsAPI handler created (skeleton)
 - ✅ Base handler class
 - 🔄 Source implementation (in progress)
 - ⏳ Processing layer integration

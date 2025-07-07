@@ -39,7 +39,7 @@
           Processing...
         </span>
       {:else}
-        Complete Assessment
+      Complete Assessment
       {/if}
     </button>
   {/if}

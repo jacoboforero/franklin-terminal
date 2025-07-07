@@ -1,10 +1,10 @@
 // ===============================
-// USER INTELLIGENCE LAYER INDEX
+// USER INTELLIGENCE LAYER INDEX (NewsAPI Only)
 // ===============================
 // This file orchestrates the user intelligence layer (Layer 0).
 //
 // This layer analyzes user profiles and generates targeted queries
-// for data sources to ensure we only fetch relevant content.
+// for NewsAPI to ensure we only fetch relevant content.
 
 const profileAnalyzer = require("./profile-analyzer");
 const queryBuilder = require("./query-builder");
@@ -15,7 +15,7 @@ const userSegments = require("./user-segments");
 /**
  * Main function to process user profiles and generate targeted queries
  * @param {Array} userProfiles - Array of user profiles from quiz
- * @returns {Object} Targeted queries for each source
+ * @returns {Object} Targeted queries for NewsAPI
  */
 async function processUserIntelligence(userProfiles) {
   try {
@@ -31,7 +31,7 @@ async function processUserIntelligence(userProfiles) {
     const aggregatedPreferences =
       preferenceAggregator.aggregateUserPreferences(userProfiles);
 
-    // Step 4: Generate source-specific queries
+    // Step 4: Generate NewsAPI queries
     const sourceQueries = {};
 
     for (const [source, preferences] of Object.entries(
@@ -47,7 +47,7 @@ async function processUserIntelligence(userProfiles) {
       }
 
       // Generate new query
-      const query = queryBuilder.buildSourceQueries(preferences)[source];
+      const query = queryBuilder.buildSourceQueries(preferences);
       sourceQueries[source] = query;
 
       // Cache the query
@@ -67,16 +67,12 @@ async function processUserIntelligence(userProfiles) {
     // Return fallback queries
     return {
       sourceQueries: {
-        reuters: { category: "general", limit: 20 },
         newsapi: { category: "general", pageSize: 20 },
-        politico: { feeds: ["politics"], limit: 20 },
-        fred: { series: ["GDP"], limit: 5 },
-        bloomberg: { feeds: ["politics"], limit: 20 },
       },
       userSegments: { segments: { general: userProfiles } },
       efficiencyMetrics: {
         totalUsers: userProfiles.length,
-        uniqueQueries: 5,
+        uniqueQueries: 1,
         sharedQueries: 0,
       },
       cacheStats: { totalEntries: 0, hitRate: 0 },
@@ -118,11 +114,7 @@ async function processSingleUser(userProfile) {
     // Return fallback queries
     return {
       queries: {
-        reuters: { category: "general", limit: 10 },
         newsapi: { category: "general", pageSize: 10 },
-        politico: { feeds: ["politics"], limit: 10 },
-        fred: { series: ["GDP"], limit: 3 },
-        bloomberg: { feeds: ["politics"], limit: 10 },
       },
       segment: "general",
       preferences: {},

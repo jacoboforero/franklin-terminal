@@ -1,77 +1,37 @@
 /**
- * Data Sources Manager
+ * Data Sources Manager (NewsAPI Only)
  *
- * Centralized interface for all external data sources.
- * Each source has its own handler with specific API integration.
+ * Centralized interface for NewsAPI integration.
  */
 
-const reutersHandler = require("./reuters/handler");
 const newsAPIHandler = require("./newsapi/handler");
-const politicoHandler = require("./politico/handler");
-const fredHandler = require("./fred/handler");
-const bloombergHandler = require("./bloomberg/handler");
 
 // Source configuration
 const SOURCES = {
-  REUTERS: "reuters",
   NEWS_API: "newsapi",
-  POLITICO: "politico",
-  FRED: "fred",
-  BLOOMBERG: "bloomberg",
 };
 
 // Source metadata
 const SOURCE_CONFIG = {
-  [SOURCES.REUTERS]: {
-    name: "Reuters",
-    handler: reutersHandler,
-    schedule: "every 1 hour",
-    rateLimit: "1000 requests/hour",
-    priority: 1,
-  },
   [SOURCES.NEWS_API]: {
     name: "NewsAPI",
     handler: newsAPIHandler,
     schedule: "every 1 hour",
     rateLimit: "1000 requests/day",
-    priority: 2,
-  },
-  [SOURCES.POLITICO]: {
-    name: "Politico",
-    handler: politicoHandler,
-    schedule: "every 2 hours",
-    rateLimit: "unlimited",
-    priority: 3,
-  },
-  [SOURCES.FRED]: {
-    name: "Federal Reserve Economic Data",
-    handler: fredHandler,
-    schedule: "every 6 hours",
-    rateLimit: "120 requests/minute",
-    priority: 4,
-  },
-  [SOURCES.BLOOMBERG]: {
-    name: "Bloomberg",
-    handler: bloombergHandler,
-    schedule: "every 1 hour",
-    rateLimit: "unlimited",
-    priority: 5,
+    priority: 1,
   },
 };
 
 /**
- * Fetch data from a specific source
- * @param {string} sourceName - Name of the source
- * @param {Object} options - Source-specific options
+ * Fetch data from NewsAPI
+ * @param {Object} options - NewsAPI-specific options
  * @returns {Promise<Array>} Array of articles
  */
 async function fetchFromSource(sourceName, options = {}) {
-  const sourceConfig = SOURCE_CONFIG[sourceName];
-
-  if (!sourceConfig) {
+  if (sourceName !== SOURCES.NEWS_API) {
     throw new Error(`Unknown source: ${sourceName}`);
   }
-
+  const sourceConfig = SOURCE_CONFIG[sourceName];
   try {
     console.log(`Fetching data from ${sourceConfig.name}...`);
     const articles = await sourceConfig.handler.fetch(options);
@@ -86,28 +46,27 @@ async function fetchFromSource(sourceName, options = {}) {
 }
 
 /**
- * Fetch data from all sources
- * @param {Object} options - Options for each source
- * @returns {Promise<Object>} Object with source name as key and articles as value
+ * Fetch data from NewsAPI only
+ * @param {Object} options - Options for NewsAPI
+ * @returns {Promise<Object>} Object with 'newsapi' as key and articles as value
  */
 async function fetchFromAllSources(options = {}) {
   const results = {};
-
-  for (const [sourceName, sourceConfig] of Object.entries(SOURCE_CONFIG)) {
-    try {
-      const sourceOptions = options[sourceName] || {};
-      results[sourceName] = await fetchFromSource(sourceName, sourceOptions);
-    } catch (error) {
-      console.error(`Failed to fetch from ${sourceName}:`, error);
-      results[sourceName] = []; // Empty array on failure
-    }
+  try {
+    const sourceOptions = options[SOURCES.NEWS_API] || {};
+    results[SOURCES.NEWS_API] = await fetchFromSource(
+      SOURCES.NEWS_API,
+      sourceOptions
+    );
+  } catch (error) {
+    console.error(`Failed to fetch from NewsAPI:`, error);
+    results[SOURCES.NEWS_API] = [];
   }
-
   return results;
 }
 
 /**
- * Get source configuration
+ * Get NewsAPI source configuration
  * @param {string} sourceName - Name of the source
  * @returns {Object} Source configuration
  */
@@ -116,7 +75,7 @@ function getSourceConfig(sourceName) {
 }
 
 /**
- * Get all source configurations
+ * Get all source configurations (NewsAPI only)
  * @returns {Object} All source configurations
  */
 function getAllSourceConfigs() {

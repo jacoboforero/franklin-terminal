@@ -1,93 +1,61 @@
 /**
- * Ingestion Layer - Main Entry Point
+ * Ingestion Layer - NewsAPI Only
  *
  * This file exports the main functionality of the ingestion layer.
- * It coordinates fetching from all data sources and standardizing the output.
+ * It coordinates fetching from NewsAPI and standardizing the output.
  */
 
-const sources = require("./sources");
+const NewsAPIHandler = require("./sources/newsapi/handler");
 const { validateArticle } = require("./sources/data-schema");
 
+const newsapi = new NewsAPIHandler();
+
 /**
- * Fetch articles from all configured sources using user intelligence queries
- * @param {Object} sourceQueries - Queries from user intelligence layer
+ * Fetch articles from NewsAPI using user intelligence queries
+ * @param {Object} queryParams - Query for NewsAPI
  * @returns {Promise<Array>} Array of standardized articles
  */
-async function fetchFromSources(sourceQueries) {
-  const allArticles = [];
-
+async function fetchFromSources(queryParams) {
   try {
-    // Fetch from each source using targeted queries
-    for (const [sourceName, queryParams] of Object.entries(sourceQueries)) {
-      const handler = sources[sourceName];
-      if (!handler) {
-        console.warn(`No handler found for source: ${sourceName}`);
-        continue;
-      }
-
-      try {
-        console.log(`Fetching from ${sourceName} with query:`, queryParams);
-        const rawArticles = await handler.fetchRawArticles(queryParams);
-
-        // Transform each raw article to standardized format
-        const standardizedArticles = rawArticles
-          .map((rawArticle) => {
-            const standardized = handler.transform(rawArticle);
-
-            // Validate the standardized article
-            const validation = validateArticle(standardized);
-            if (!validation.isValid) {
-              console.warn(
-                `Invalid article from ${sourceName}:`,
-                validation.errors
-              );
-              return null;
-            }
-
-            return standardized;
-          })
-          .filter(Boolean); // Remove null articles
-
-        allArticles.push(...standardizedArticles);
-        console.log(
-          `Successfully processed ${standardizedArticles.length} articles from ${sourceName}`
-        );
-      } catch (error) {
-        console.error(`Error fetching from ${sourceName}:`, error);
-        // Continue with other sources even if one fails
-      }
-    }
-
-    console.log(`Total articles fetched: ${allArticles.length}`);
-    return allArticles;
+    console.log("Fetching from NewsAPI with query:", queryParams);
+    const rawArticles = await newsapi.fetchRawArticles(queryParams);
+    const standardizedArticles = rawArticles
+      .map((rawArticle) => {
+        const standardized = newsapi.transform(rawArticle);
+        const validation = validateArticle(standardized);
+        if (!validation.isValid) {
+          console.warn("Invalid article from NewsAPI:", validation.errors);
+          return null;
+        }
+        return standardized;
+      })
+      .filter(Boolean);
+    console.log(
+      `Successfully processed ${standardizedArticles.length} articles from NewsAPI`
+    );
+    return standardizedArticles;
   } catch (error) {
-    console.error("Error in fetchAllSources:", error);
+    console.error("Error fetching from NewsAPI:", error);
     throw error;
   }
 }
 
 /**
- * Fetch articles from a specific source with query parameters
- * @param {string} sourceName - Name of the source
- * @param {Object} queryParams - Query parameters for the source
+ * Fetch articles from NewsAPI with query parameters
+ * @param {Object} queryParams - Query parameters for NewsAPI
  * @returns {Promise<Array>} Array of standardized articles
  */
-async function fetchFromSource(sourceName, queryParams = {}) {
-  const handler = sources[sourceName];
-  if (!handler) {
-    throw new Error(`Unknown source: ${sourceName}`);
-  }
-
-  const rawArticles = await handler.fetchRawArticles(queryParams);
-  return rawArticles.map((rawArticle) => handler.transform(rawArticle));
+async function fetchFromSource(queryParams = {}) {
+  const rawArticles = await newsapi.fetchRawArticles(queryParams);
+  return rawArticles.map((rawArticle) => newsapi.transform(rawArticle));
 }
 
 /**
- * Get list of available sources
- * @returns {Array} Array of source names
+ * Get list of available sources (NewsAPI only)
+ * @returns {Array} Array with 'newsapi'
  */
 function getAvailableSources() {
-  return Object.keys(sources);
+  return ["newsapi"];
 }
 
 /**
@@ -104,5 +72,5 @@ module.exports = {
   fetchFromSource,
   getAvailableSources,
   validateSingleArticle,
-  sources,
+  newsapi,
 };

@@ -110,11 +110,7 @@ External Sources → Ingestion → Processing → API → Frontend
 
 ### Data Sources
 
-- Reuters API
-- NewsAPI
-- Politico RSS
-- FRED economic data
-- Bloomberg RSS
+- NewsAPI (aggregates multiple sources)
 
 ### Relevance Filtering
 
@@ -154,7 +150,7 @@ const firebaseConfig = {
 
 ## Next Steps
 
-1. Implement source handlers (Reuters, NewsAPI, etc.)
+1. Implement NewsAPI handler
 2. Build processing layer with relevance scoring
 3. Create API endpoints for frontend integration
 4. Add user authentication and profiles

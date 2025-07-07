@@ -28,7 +28,7 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
 │                    INGESTION LAYER                          │
-│  • Data source handlers (Reuters, NewsAPI, etc.)            │
+│  • NewsAPI handler (MVP)                                    │
 │  • Raw data fetching                                         │
 │  • Standardized transformation                               │
 └─────────────────────┬───────────────────────────────────────┘
@@ -36,7 +36,7 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 ┌─────────────────────▼───────────────────────────────────────┐
 │                 USER INTELLIGENCE LAYER                     │
 │  • User profile analysis                                     │
-│  • Query generation for sources                              │
+│  • Query generation for NewsAPI                              │
 │  • Preference aggregation                                    │
 │  • Query caching & optimization                              │
 └─────────────────────┬───────────────────────────────────────┘
@@ -56,16 +56,16 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 **Purpose**: Analyze user profiles and generate targeted queries
 
 - **Input**: User profiles from quiz
-- **Output**: Source-specific query parameters
+- **Output**: NewsAPI query parameters
 - **Key Files**: `profile-analyzer.js`, `query-builder.js`, `preference-aggregator.js`
 
 ### 1. Ingestion Layer (`/ingestion/`)
 
-**Purpose**: Fetch and standardize data from external sources
+**Purpose**: Fetch and standardize data from NewsAPI
 
 - **Input**: Query parameters from user intelligence layer
 - **Output**: Standardized articles in consistent format
-- **Key Files**: `data-schema.js`, source handlers, `base-handler.js`
+- **Key Files**: `data-schema.js`, `newsapi/handler.js`, `base-handler.js`
 
 ### 2. Processing Layer (`/processing/`)
 
@@ -94,9 +94,9 @@ Franklin Terminal uses a layered architecture to separate concerns and enable in
 ## Data Flow
 
 ```
-User Profiles → User Intelligence → Ingestion → Processing → API → Frontend
+User Profiles → User Intelligence → Ingestion (NewsAPI) → Processing → API → Frontend
                     ↓                    ↓           ↓         ↓
-                Query Cache ←→ External Sources ←→ Storage ←→ All Layers
+                Query Cache ←→ NewsAPI ←→ Storage ←→ All Layers
 ```
 
 ## Development Guidelines
@@ -121,18 +121,18 @@ User Profiles → User Intelligence → Ingestion → Processing → API → Fro
 
 ## Current Status
 
-| Layer             | Status          | Next Steps               |
-| ----------------- | --------------- | ------------------------ |
-| User Intelligence | ✅ Architecture | 🔄 Implementation        |
-| Ingestion         | ✅ Architecture | 🔄 Source implementation |
-| Processing        | ✅ Architecture | 🔄 Implementation        |
-| API               | ✅ Architecture | 🔄 Implementation        |
-| Storage           | ✅ Architecture | 🔄 Implementation        |
+| Layer             | Status          | Next Steps                |
+| ----------------- | --------------- | ------------------------- |
+| User Intelligence | ✅ Architecture | 🔄 Implementation         |
+| Ingestion         | ✅ Architecture | 🔄 NewsAPI implementation |
+| Processing        | ✅ Architecture | 🔄 Implementation         |
+| API               | ✅ Architecture | 🔄 Implementation         |
+| Storage           | ✅ Architecture | 🔄 Implementation         |
 
 ## Getting Started
 
 1. **Start with User Intelligence Layer**: Implement profile analysis and query generation
-2. **Implement Ingestion Layer**: Build source handlers with query parameters
+2. **Implement Ingestion Layer**: Build NewsAPI handler with query parameters
 3. **Add Processing Layer**: Build relevance scoring and content analysis
 4. **Create API Layer**: Build REST endpoints and response formatting
 5. **Setup Storage Layer**: Configure databases and caching

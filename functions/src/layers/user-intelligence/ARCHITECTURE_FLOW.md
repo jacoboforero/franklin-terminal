@@ -1,4 +1,4 @@
-# User Intelligence → Ingestion Layer Flow
+# User Intelligence → Ingestion Layer Flow (NewsAPI Only)
 
 ## Complete Data Flow
 
@@ -25,43 +25,22 @@ Quiz Results → Query Generation → API Calls → Analysis → Response → Da
 }
 ```
 
-**Output**: Source-specific query parameters
+**Output**: NewsAPI query parameters
 
 ```javascript
 {
-  reuters: { category: "technology", keywords: ["AI", "regulation"], limit: 50 },
-  newsapi: { q: "artificial intelligence regulation", category: "technology", pageSize: 50 },
-  politico: { feeds: ["technology-policy"], keywords: ["AI"], limit: 50 },
-  fred: { series: ["NASDAQ", "AI_INDEX"], limit: 10 },
-  bloomberg: { sector: "technology", keywords: ["AI", "regulation"], limit: 50 }
+  q: "artificial intelligence regulation",
+  category: "technology",
+  language: "en",
+  country: "us",
+  pageSize: 50
 }
 ```
 
 ### 2. Ingestion Layer (Layer 1)
 
 **Input**: Query parameters from User Intelligence
-**Process**: Each handler receives its specific query parameters
-
-#### Reuters Handler Example:
-
-```javascript
-// User Intelligence sends:
-{ category: "technology", keywords: ["AI", "regulation"], limit: 50 }
-
-// Reuters handler receives and uses:
-async fetchRawArticles(queryParams) {
-  const { category, keywords, limit } = queryParams;
-
-  // Build Reuters-specific API call
-  const url = `https://api.reuters.com/news?category=${category}&keywords=${keywords.join(',')}&limit=${limit}`;
-
-  // Make actual API call
-  const response = await this.makeRequest(url);
-
-  // Return raw Reuters data
-  return response.articles;
-}
-```
+**Process**: NewsAPI handler receives query parameters
 
 #### NewsAPI Handler Example:
 
@@ -86,20 +65,20 @@ async fetchRawArticles(queryParams) {
 
 ### 3. Key Points
 
-1. **Query Builder Functions** (`buildReutersQuery()`, etc.) are **NOT** API calls
+1. **Query Builder Functions** (`buildNewsAPIQuery()`) are **NOT** API calls
 
    - They only generate query parameters
    - They don't make any network requests
-   - They're pure functions that transform user preferences into source-specific queries
+   - They're pure functions that transform user preferences into NewsAPI-specific queries
 
-2. **Source Handlers** (`reuters/handler.js`, etc.) are **WHERE** the actual API calls happen
+2. **Source Handlers** (`newsapi/handler.js`) are **WHERE** the actual API calls happen
 
    - They receive query parameters from User Intelligence
    - They use those parameters to make targeted API calls
    - They transform raw API responses into standardized format
 
 3. **Efficiency Gain**:
-   - Without User Intelligence: Fetch ALL articles from ALL sources (inefficient)
+   - Without User Intelligence: Fetch ALL articles from NewsAPI (inefficient)
    - With User Intelligence: Fetch only relevant articles using targeted queries (90% more efficient)
 
 ## Example Implementation Flow
@@ -109,19 +88,19 @@ async fetchRawArticles(queryParams) {
 const userPreferences =
   profileAnalyzer.extractSearchablePreferences(userProfile);
 const sourceQueries = queryBuilder.buildSourceQueries(userPreferences);
-// Returns: { reuters: { category: "tech", keywords: ["AI"] }, ... }
+// Returns: { q: "AI regulation", category: "technology", pageSize: 50 }
 
 // 2. Ingestion Layer
 const ingestionResult = await ingestion.fetchFromSources(sourceQueries);
-// This calls each handler with their specific query parameters
+// This calls NewsAPI handler with specific query parameters
 
-// 3. Each Handler
-// Reuters handler receives: { category: "tech", keywords: ["AI"] }
-// Makes API call: GET https://api.reuters.com/news?category=tech&keywords=AI
-// Returns: Raw Reuters articles
+// 3. NewsAPI Handler
+// Receives: { q: "AI regulation", category: "technology", pageSize: 50 }
+// Makes API call: GET https://newsapi.org/v2/top-headlines?q=AI%20regulation&category=technology&pageSize=50
+// Returns: Raw NewsAPI articles
 
 // 4. Processing Layer
-// Receives standardized articles from all sources
+// Receives standardized articles from NewsAPI
 // Applies relevance scoring, content analysis, etc.
 ```
 
@@ -129,6 +108,6 @@ const ingestionResult = await ingestion.fetchFromSources(sourceQueries);
 
 1. **Separation of Concerns**: Query generation vs. API execution
 2. **Efficiency**: Only fetch relevant content
-3. **Scalability**: Easy to add new sources
+3. **Scalability**: Easy to add new sources in the future
 4. **Maintainability**: Each layer has a single responsibility
 5. **Testing**: Can test query generation separately from API calls

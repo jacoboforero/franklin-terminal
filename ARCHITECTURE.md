@@ -1,5 +1,7 @@
 # Franklin Terminal - Technical Architecture
 
+g
+
 ## System Overview
 
 Political intelligence platform with personalized briefings based on user stake areas. Multi-layered data processing pipeline from ingestion to delivery.
@@ -17,7 +19,7 @@ External Sources → Ingestion → Processing → API → Frontend
 ### 1. Ingestion Layer (`/layers/ingestion/`)
 
 - **Purpose**: Fetch and standardize data from external sources
-- **Input**: APIs (Reuters, NewsAPI), RSS feeds (Politico, Bloomberg), FRED data
+- **Input**: NewsAPI (aggregates multiple sources)
 - **Output**: Standardized articles matching `data-schema.js`
 - **Key Files**: `sources/` (handlers), `data-schema.js`, `base-handler.js`
 
@@ -90,7 +92,7 @@ External Sources → Ingestion → Processing → API → Frontend
   summary: "string",
   content: "string",
   category: "Economic Policy|Political Policy|Technology Regulation|...",
-  source: "Reuters|NewsAPI|Politico|FRED|Bloomberg",
+  source: "NewsAPI",
   sourceUrl: "url",
   date: "ISO 8601",
   tags: ["array"],

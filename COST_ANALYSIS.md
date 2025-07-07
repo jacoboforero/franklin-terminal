@@ -4,7 +4,7 @@
 
 - **Briefing Updates**: 6x per day (every 4 hours)
 - **User Base**: Scaling from 10 to 1,000+ users
-- **Data Sources**: 5 sources (NewsAPI, FRED, Politico RSS, Bloomberg RSS, Reuters)
+- **Data Sources**: NewsAPI (aggregates multiple sources)
 - **Architecture**: Firebase Functions + Firestore + Storage
 
 ## 💰 **Firebase Pricing Breakdown**
@@ -228,34 +228,11 @@ Monthly Cost (10,000 users): ~$0.04/month
 
 ```
 Daily API Calls:
-- 6 scheduled runs × 5 sources = 30 calls per day
+- 6 scheduled runs × 1 source = 6 calls per day
 - Additional calls for user-specific queries: ~150 calls per day
-- Total: ~180 calls per day
+- Total: ~156 calls per day
 
 Monthly Cost: FREE (within free tier)
-```
-
-#### **FRED API**
-
-- **Free Tier**: 120 requests/minute
-- **Paid Tier**: Free for most use cases
-
-**Cost Calculation:**
-
-```
-Daily API Calls:
-- 6 scheduled runs × 10 economic indicators = 60 calls per day
-- Additional calls for user-specific data: ~90 calls per day
-- Total: ~150 calls per day
-
-Monthly Cost: FREE
-```
-
-#### **RSS Feeds (Politico, Bloomberg)**
-
-- **Cost**: FREE (public feeds)
-
-**Monthly Cost: FREE**
 
 ## 📈 **Total Monthly Cost Summary**
 
@@ -336,3 +313,4 @@ Monthly Cost: FREE
 - **10,000 users**: ~$76.36/month (reasonable for scale)
 
 The architecture leverages Firebase's generous free tiers effectively, making it viable for both MVP and growth phases. The main cost drivers are function compute time and database operations, both of which can be optimized as you scale.
+```

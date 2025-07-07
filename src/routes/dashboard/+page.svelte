@@ -200,8 +200,8 @@
         </button>
       </div>
     {:else}
-      <!-- Widget Grid - Improved layout with better spacing -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-min">
+    <!-- Widget Grid - Improved layout with better spacing -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-min">
       <!-- Row 1: Top Briefing (left side) -->
       <div class="lg:col-span-4 h-64">
         <BriefingWidget 

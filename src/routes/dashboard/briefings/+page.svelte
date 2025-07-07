@@ -34,8 +34,8 @@
           ],
           sources: [
             { name: "Federal Reserve Meeting Minutes", url: "#" },
-            { name: "Bloomberg Economics Analysis", url: "#" },
-            { name: "Reuters Market Coverage", url: "#" }
+            { name: "NewsAPI Economics Analysis", url: "#" },
+            { name: "Financial Times Market Coverage", url: "#" }
           ],
           component: BriefingCard
         },
@@ -61,7 +61,7 @@
           ],
           sources: [
             { name: "Financial Times Tech Coverage", url: "#" },
-            { name: "Bloomberg Markets", url: "#" },
+            { name: "NewsAPI Markets", url: "#" },
             { name: "TechCrunch Analysis", url: "#" }
           ],
           component: BriefingCard
@@ -189,7 +189,7 @@
           ],
           sources: [
             { name: "International Energy Agency", url: "#" },
-            { name: "Bloomberg New Energy Finance", url: "#" },
+            { name: "NewsAPI New Energy Finance", url: "#" },
             { name: "Environmental Research", url: "#" }
           ],
           component: BriefingCard
