@@ -63,6 +63,12 @@ class BaseHandler {
    */
   async makeRequest(url, options = {}) {
     const { default: fetch } = await import("node-fetch");
+    const {
+      handleApiError,
+      isRetryableError,
+      calculateRetryDelay,
+      logError,
+    } = require("../../../utils/error-handler");
 
     const requestOptions = {
       method: "GET",
@@ -86,7 +92,13 @@ class BaseHandler {
         const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const error = new Error(
+            `HTTP ${response.status}: ${response.statusText}`
+          );
+          error.status = response.status;
+          error.statusText = response.statusText;
+          error.headers = response.headers;
+          throw error;
         }
 
         const data = await response.json();
@@ -96,18 +108,49 @@ class BaseHandler {
         return data;
       } catch (error) {
         lastError = error;
-        console.warn(`Request attempt ${attempt} failed:`, error.message);
 
-        if (attempt < this.config.retryAttempts) {
-          // Exponential backoff
-          const delay = Math.pow(2, attempt) * 1000;
+        // Handle error with standardized error handling
+        const standardizedError = handleApiError(
+          error,
+          this.getSourceName(),
+          this.config,
+          attempt
+        );
+        logError(standardizedError, `Request attempt ${attempt}`);
+
+        // Check if we should retry
+        if (
+          attempt < this.config.retryAttempts &&
+          isRetryableError(
+            standardizedError,
+            this.config.retryAttempts,
+            attempt
+          )
+        ) {
+          const delay = calculateRetryDelay(attempt);
+          console.log(`Retrying in ${delay}ms...`);
           await new Promise((resolve) => setTimeout(resolve, delay));
+        } else {
+          break;
         }
       }
     }
 
+    // Create final error with all context
+    const finalError = handleApiError(
+      lastError,
+      this.getSourceName(),
+      this.config,
+      this.config.retryAttempts
+    );
+    logError(finalError, "Final request failure");
+
     throw new Error(
-      `All ${this.config.retryAttempts} request attempts failed. Last error: ${lastError.message}`
+      `All ${
+        this.config.retryAttempts
+      } request attempts failed for ${this.getSourceName()}. Last error: ${
+        lastError.message
+      }`
     );
   }
 

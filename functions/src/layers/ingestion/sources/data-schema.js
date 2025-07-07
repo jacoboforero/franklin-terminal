@@ -237,6 +237,13 @@ const EXAMPLE_ARTICLE = {
  */
 function validateArticle(article) {
   const errors = [];
+  const warnings = [];
+
+  // Check if article is an object
+  if (!article || typeof article !== "object") {
+    errors.push("Article must be an object");
+    return { isValid: false, errors, warnings };
+  }
 
   // Check required fields
   const requiredFields = [
@@ -324,10 +331,60 @@ function validateArticle(article) {
     }
   }
 
+  // Additional validations
+  if (article.title && article.title.length > 500) {
+    warnings.push("Title exceeds recommended length of 500 characters");
+  }
+
+  if (article.summary && article.summary.length > 1000) {
+    warnings.push("Summary exceeds recommended length of 1000 characters");
+  }
+
+  if (article.content && article.content.length > 50000) {
+    warnings.push("Content exceeds recommended length of 50000 characters");
+  }
+
+  if (article.sourceUrl && !isValidUrl(article.sourceUrl)) {
+    warnings.push("Source URL may not be valid");
+  }
+
+  if (article.date && !isValidDate(article.date)) {
+    warnings.push("Date format may not be valid ISO 8601");
+  }
+
   return {
     isValid: errors.length === 0,
     errors,
+    warnings,
   };
+}
+
+/**
+ * Check if URL is valid
+ * @param {string} url - URL to validate
+ * @returns {boolean} True if valid URL
+ */
+function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if date is valid ISO 8601
+ * @param {string} date - Date string to validate
+ * @returns {boolean} True if valid date
+ */
+function isValidDate(date) {
+  try {
+    const parsed = new Date(date);
+    return !isNaN(parsed.getTime());
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -371,4 +428,6 @@ module.exports = {
   EXAMPLE_ARTICLE,
   validateArticle,
   transformToStandardFormat,
+  isValidUrl,
+  isValidDate,
 };

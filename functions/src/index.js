@@ -7,15 +7,45 @@
  * User Intelligence → Ingestion Layer → Processing Layer → API Layer → Storage Layer
  */
 
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
+// Load environment variables from .env file (development only)
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+const {
+  validateEnvironment,
+  getEnvironmentSummary,
+} = require("./config/environment");
+
+// Initialize Firebase Admin
+admin.initializeApp();
+
+// Validate environment on startup
+const envValidation = validateEnvironment();
+if (!envValidation.isValid) {
+  console.error("❌ Environment validation failed:", envValidation.errors);
+  if (envValidation.warnings.length > 0) {
+    console.warn("⚠️  Environment warnings:", envValidation.warnings);
+  }
+} else {
+  console.log("✅ Environment validation passed");
+  if (envValidation.warnings.length > 0) {
+    console.warn("⚠️  Environment warnings:", envValidation.warnings);
+  }
+}
+
+// Log environment summary
+console.log("🔧 Environment Summary:", getEnvironmentSummary());
+
 // Import layer components
 const userIntelligence = require("./layers/user-intelligence");
 const ingestionLayer = require("./layers/ingestion");
 const processingLayer = require("./layers/processing");
 const apiLayer = require("./layers/api");
 const storageLayer = require("./layers/storage");
-
-// Firebase Functions exports
-const functions = require("firebase-functions");
 
 /**
  * Scheduled function to process articles through the pipeline
