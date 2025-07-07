@@ -36,9 +36,54 @@
     if (currentStep < totalSteps) currentStep++;
   }
   
-  function handleComplete() {
-    console.log('Complete Assessment:', answers);
-    // TODO: Save to Firebase and redirect
+  import { goto } from '$app/navigation';
+  import { saveUserProfile, validateUserProfile } from '$lib/services/user-profile.js';
+  import { getPersonalizedBriefing } from '$lib/services/briefing-service.js';
+  
+  let isCompleting = false;
+  let completionError = null;
+  
+  async function handleComplete() {
+    try {
+      isCompleting = true;
+      completionError = null;
+      
+      console.log('Completing Assessment:', answers);
+      
+      // Validate user profile
+      const validation = validateUserProfile(answers);
+      if (!validation.isValid) {
+        completionError = `Please fix the following errors: ${validation.errors.join(', ')}`;
+        return;
+      }
+      
+      if (validation.warnings.length > 0) {
+        console.warn('Profile warnings:', validation.warnings);
+      }
+      
+      // Save user profile to Firebase
+      const savedProfile = await saveUserProfile(answers);
+      console.log('Profile saved:', savedProfile.id);
+      
+      // Get personalized briefing
+      const briefingResult = await getPersonalizedBriefing(savedProfile);
+      
+      if (briefingResult.success) {
+        console.log('Briefing generated successfully');
+        // Redirect to dashboard
+        goto('/dashboard');
+      } else {
+        console.warn('Briefing generation failed, using fallback:', briefingResult.error);
+        // Still redirect to dashboard with fallback data
+        goto('/dashboard');
+      }
+      
+    } catch (error) {
+      console.error('Error completing assessment:', error);
+      completionError = `Failed to complete assessment: ${error.message}`;
+    } finally {
+      isCompleting = false;
+    }
   }
   
   const steps = [
@@ -106,6 +151,13 @@
       onPrevious={handlePrevious}
       onNext={handleNext}
       onComplete={handleComplete}
+      {isCompleting}
     />
+    
+    {#if completionError}
+      <div class="mt-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+        <p class="text-red-200 text-sm font-mono">{completionError}</p>
+      </div>
+    {/if}
   </main>
 </div> 
