@@ -1,0 +1,196 @@
+[debug] [2025-07-17T19:57:32.344Z] ----------------------------------------------------------------------
+[debug] [2025-07-17T19:57:32.351Z] Command:       /opt/homebrew/Cellar/node/23.5.0/bin/node /opt/homebrew/bin/firebase deploy --only functions
+[debug] [2025-07-17T19:57:32.351Z] CLI Version:   14.7.0
+[debug] [2025-07-17T19:57:32.351Z] Platform:      darwin
+[debug] [2025-07-17T19:57:32.351Z] Node Version:  v23.5.0
+[debug] [2025-07-17T19:57:32.352Z] Time:          Thu Jul 17 2025 15:57:32 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-07-17T19:57:32.352Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-07-17T19:57:32.447Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-17T19:57:32.447Z] > authorizing via signed-in user (jacobo.forero@hotmail.com)
+[debug] [2025-07-17T19:57:32.447Z] [iam] checking project si-terminal for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-07-17T19:57:32.448Z] Checked if tokens are valid: false, expires at: 1752775494554
+[debug] [2025-07-17T19:57:32.448Z] Checked if tokens are valid: false, expires at: 1752775494554
+[debug] [2025-07-17T19:57:32.448Z] > refreshing access token with scopes: []
+[debug] [2025-07-17T19:57:32.449Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-07-17T19:57:32.449Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-07-17T19:57:32.668Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-07-17T19:57:32.668Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-07-17T19:57:32.680Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions [none]
+[debug] [2025-07-17T19:57:32.680Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:32.680Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-07-17T19:57:32.869Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions 200
+[debug] [2025-07-17T19:57:32.869Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-07-17T19:57:32.869Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:32.869Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:32.869Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/si-terminal/serviceAccounts/si-terminal@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-07-17T19:57:32.870Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/si-terminal/serviceAccounts/si-terminal@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-07-17T19:57:33.081Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/si-terminal/serviceAccounts/si-terminal@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-07-17T19:57:33.081Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/si-terminal/serviceAccounts/si-terminal@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'si-terminal'...
+[info] 
+[info] i  deploying functions 
+[debug] [2025-07-17T19:57:33.084Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.085Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.085Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-07-17T19:57:33.085Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:33.603Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-07-17T19:57:33.603Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-07-17T19:57:33.603Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.603Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.603Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal [none]
+[debug] [2025-07-17T19:57:33.734Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal 200
+[debug] [2025-07-17T19:57:33.735Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal {"projectNumber":"19947220100","projectId":"si-terminal","lifecycleState":"ACTIVE","name":"SI-Terminal","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-06-17T14:30:08.479135Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-07-17T19:57:33.735Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.735Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.735Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.736Z] Checked if tokens are valid: true, expires at: 1752785851669
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-07-17T19:57:33.736Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.736Z] Checked if tokens are valid: true, expires at: 1752785851669
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-07-17T19:57:33.736Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.736Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:33.736Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-07-17T19:57:33.736Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:33.737Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-07-17T19:57:33.737Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:33.738Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com [none]
+[debug] [2025-07-17T19:57:33.739Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:33.739Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com [none]
+[debug] [2025-07-17T19:57:33.739Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:34.064Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudfunctions.googleapis.com 200
+[debug] [2025-07-17T19:57:34.065Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-07-17T19:57:34.135Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/runtimeconfig.googleapis.com 200
+[debug] [2025-07-17T19:57:34.135Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-07-17T19:57:34.136Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com 200
+[debug] [2025-07-17T19:57:34.136Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com [omitted]
+[warn] ⚠  artifactregistry: missing required API artifactregistry.googleapis.com. Enabling now... 
+[debug] [2025-07-17T19:57:34.137Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:34.137Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:34.137Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com:enable [none]
+[debug] [2025-07-17T19:57:34.137Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com:enable x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:34.142Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com 200
+[debug] [2025-07-17T19:57:34.142Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API cloudbuild.googleapis.com. Enabling now... 
+[debug] [2025-07-17T19:57:34.143Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:34.143Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:34.143Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com:enable [none]
+[debug] [2025-07-17T19:57:34.143Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com:enable x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:34.795Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com:enable 200
+[debug] [2025-07-17T19:57:34.796Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com:enable [omitted]
+[debug] [2025-07-17T19:57:34.814Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com:enable 200
+[debug] [2025-07-17T19:57:34.814Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com:enable [omitted]
+[debug] [2025-07-17T19:57:44.799Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:44.800Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:44.801Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com [none]
+[debug] [2025-07-17T19:57:44.801Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:44.815Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:44.815Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:44.815Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com [none]
+[debug] [2025-07-17T19:57:44.815Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:45.293Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com 200
+[debug] [2025-07-17T19:57:45.293Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-07-17T19:57:45.296Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com 200
+[debug] [2025-07-17T19:57:45.296Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-07-17T19:57:45.297Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:45.298Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:45.298Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/si-terminal/adminSdkConfig [none]
+[debug] [2025-07-17T19:57:45.702Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/si-terminal/adminSdkConfig 200
+[debug] [2025-07-17T19:57:45.703Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/si-terminal/adminSdkConfig {"projectId":"si-terminal","storageBucket":"si-terminal.firebasestorage.app"}
+[debug] [2025-07-17T19:57:45.703Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:45.703Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:45.703Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/si-terminal/configs [none]
+[debug] [2025-07-17T19:57:45.963Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/si-terminal/configs 200
+[debug] [2025-07-17T19:57:45.963Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/si-terminal/configs {}
+[debug] [2025-07-17T19:57:45.966Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[debug] [2025-07-17T19:57:46.613Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "cron": "^3.1.6",
+    "dotenv": "^16.6.1",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.0.1",
+    "joi": "^17.11.0",
+    "lodash": "^4.17.21",
+    "node-cache": "^5.1.2",
+    "node-fetch": "^3.3.2",
+    "rss-parser": "^3.13.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-07-17T19:57:46.614Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-07-17T19:57:46.614Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-07-17T19:57:46.622Z] Found firebase-functions binary at '/Users/jacoboforero/Desktop/Work/SI Terminal/si-app/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8684
+
+[debug] [2025-07-17T19:57:47.180Z] Got response from /__/functions.yaml {"endpoints":{},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-07-17T19:57:51.201Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:51.201Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:51.201Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-07-17T19:57:51.201Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:51.550Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com 200
+[debug] [2025-07-17T19:57:51.551Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com [omitted]
+[warn] ⚠  extensions: missing required API firebaseextensions.googleapis.com. Enabling now... 
+[debug] [2025-07-17T19:57:51.551Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:51.551Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:57:51.551Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com:enable [none]
+[debug] [2025-07-17T19:57:51.551Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com:enable x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:57:52.241Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com:enable 200
+[debug] [2025-07-17T19:57:52.241Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com:enable [omitted]
+[debug] [2025-07-17T19:58:02.248Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.251Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.252Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-07-17T19:58:02.252Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:58:02.673Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com 200
+[debug] [2025-07-17T19:58:02.674Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/si-terminal/services/firebaseextensions.googleapis.com [omitted]
+[info] ✔  extensions: required API firebaseextensions.googleapis.com is enabled 
+[debug] [2025-07-17T19:58:02.680Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-17T19:58:02.680Z] > authorizing via signed-in user (jacobo.forero@hotmail.com)
+[debug] [2025-07-17T19:58:02.680Z] [iam] checking project si-terminal for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-07-17T19:58:02.681Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.681Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.681Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions [none]
+[debug] [2025-07-17T19:58:02.681Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions x-goog-quota-user=projects/si-terminal
+[debug] [2025-07-17T19:58:02.681Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-07-17T19:58:02.882Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions 200
+[debug] [2025-07-17T19:58:02.883Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/si-terminal:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-07-17T19:58:02.885Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.885Z] Checked if tokens are valid: true, expires at: 1752785851669
+[debug] [2025-07-17T19:58:02.887Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/si-terminal/instances pageSize=100&pageToken=
+[debug] [2025-07-17T19:58:05.259Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/si-terminal/instances 200
+[debug] [2025-07-17T19:58:05.259Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/si-terminal/instances {}
+[debug] [2025-07-17T19:58:05.265Z] Failed to validate key FIREBASE_PROJECT_ID: Error: Key FIREBASE_PROJECT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-17T19:58:05.266Z] Failed to validate key FIREBASE_DATABASE_URL: Error: Key FIREBASE_DATABASE_URL starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-17T19:58:05.266Z] Failed to validate key FIREBASE_STORAGE_BUCKET: Error: Key FIREBASE_STORAGE_BUCKET starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] Error: Failed to load environment variables from .env.:
+[error] - Error Key FIREBASE_PROJECT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_DATABASE_URL starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_STORAGE_BUCKET starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)

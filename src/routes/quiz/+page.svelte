@@ -28,6 +28,14 @@
     timeAvailable: ''
   };
   
+  // Ensure all nested objects are properly initialized
+  $: if (!answers.investments) answers.investments = { hasPortfolio: false, details: '' };
+  $: if (!answers.career) answers.career = { industry: '', company: '', role: '' };
+  $: if (!answers.personal) answers.personal = { religion: '', ethnicity: '', nationality: '' };
+  $: if (!answers.customStakes) answers.customStakes = [];
+  $: if (!answers.regions) answers.regions = [];
+  $: if (!answers.topics) answers.topics = [];
+  
   function handlePrevious() {
     if (currentStep > 1) currentStep--;
   }

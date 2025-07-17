@@ -74,11 +74,89 @@ export async function getUserProfile(userId) {
       return userSnap.data();
     } else {
       console.log("User profile not found:", userId);
+
+      // For mock users, create a default profile
+      if (userId === "mock-user-id") {
+        console.log("Creating mock user profile...");
+        const mockProfile = createMockUserProfile();
+        await saveUserProfile(mockProfile);
+        return mockProfile;
+      }
+
       return null;
     }
   } catch (error) {
     console.error("Error getting user profile:", error);
     throw new Error(`Failed to get user profile: ${error.message}`);
+  }
+}
+
+/**
+ * Create a mock user profile for development/testing
+ * @returns {Object} Mock user profile
+ */
+export function createMockUserProfile() {
+  return {
+    id: "mock-user-id",
+    name: "Demo User",
+    profession: "Technology Professional",
+    location: "San Francisco, CA",
+    investments: {
+      hasPortfolio: true,
+      details: "Tech stocks, index funds, real estate",
+    },
+    career: {
+      industry: "Technology",
+      company: "Tech Corp",
+      role: "Software Engineer",
+    },
+    personal: {
+      religion: "Not specified",
+      ethnicity: "Not specified",
+      nationality: "US",
+    },
+    customStakes: [
+      {
+        name: "Tech Industry Impact",
+        description: "How AI regulation affects my work",
+      },
+    ],
+    regions: ["North America", "Europe"],
+    topics: ["Technology Regulation", "Economic Policy", "AI Policy"],
+    expertise: "Intermediate",
+    timeAvailable: "10-20 minutes",
+    stakeAreas: [
+      { name: "Investment Portfolio", weight: 0.4 },
+      { name: "Career & Industry", weight: 0.4 },
+      { name: "Personal Values", weight: 0.2 },
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    version: "1.0",
+    status: "active",
+  };
+}
+
+/**
+ * Get or create user profile for anonymous users
+ * @param {string} userId - User ID (can be mock-user-id for anonymous)
+ * @returns {Promise<Object>} User profile
+ */
+export async function getOrCreateUserProfile(userId) {
+  try {
+    let profile = await getUserProfile(userId);
+
+    if (!profile) {
+      // Create a new anonymous profile
+      const newProfile = createMockUserProfile();
+      newProfile.id = userId;
+      profile = await saveUserProfile(newProfile);
+    }
+
+    return profile;
+  } catch (error) {
+    console.error("Error getting or creating user profile:", error);
+    throw new Error(`Failed to get or create user profile: ${error.message}`);
   }
 }
 

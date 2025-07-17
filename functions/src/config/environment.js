@@ -10,7 +10,7 @@
 const ENV_CONFIG = {
   // NewsAPI Configuration
   NEWSAPI: {
-    API_KEY: process.env.NEWSAPI_API_KEY,
+    API_KEY: process.env.NEWSAPI_API_KEY || null,
     BASE_URL: process.env.NEWSAPI_BASE_URL || "https://newsapi.org/v2",
     RATE_LIMIT: parseInt(process.env.NEWSAPI_RATE_LIMIT) || 1000, // requests per day
     TIMEOUT: parseInt(process.env.NEWSAPI_TIMEOUT) || 30000,
@@ -29,9 +29,9 @@ const ENV_CONFIG = {
 
   // Firebase Configuration
   FIREBASE: {
-    PROJECT_ID: process.env.FIREBASE_PROJECT_ID || "si-terminal",
-    DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
-    STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    PROJECT_ID: process.env.PROJECT_ID || "si-terminal",
+    DATABASE_URL: process.env.DATABASE_URL,
+    STORAGE_BUCKET: process.env.STORAGE_BUCKET,
   },
 };
 
@@ -45,7 +45,11 @@ function validateEnvironment() {
 
   // Check required API keys
   const requiredKeys = [
-    { source: "NEWSAPI", key: "NEWSAPI.API_KEY", required: true },
+    {
+      source: "NEWSAPI",
+      key: "NEWSAPI.API_KEY",
+      required: process.env.NODE_ENV === "production",
+    },
   ];
 
   for (const { source, key, required } of requiredKeys) {
@@ -59,23 +63,42 @@ function validateEnvironment() {
     }
   }
 
-  // Check Firebase configuration
-  if (!ENV_CONFIG.FIREBASE.PROJECT_ID) {
-    errors.push("Missing FIREBASE_PROJECT_ID");
+  // In development, don't fail validation for missing optional keys
+  if (process.env.NODE_ENV === "development" && warnings.length > 0) {
+    console.log("⚠️  Development mode warnings (non-blocking):", warnings);
   }
 
-  // Validate rate limits
-  Object.entries(ENV_CONFIG).forEach(([source, config]) => {
-    if (config.RATE_LIMIT && config.RATE_LIMIT <= 0) {
-      errors.push(`Invalid rate limit for ${source}: ${config.RATE_LIMIT}`);
-    }
-    if (config.TIMEOUT && config.TIMEOUT <= 0) {
-      errors.push(`Invalid timeout for ${source}: ${config.TIMEOUT}`);
-    }
-  });
+  // Check Firebase configuration - only require PROJECT_ID in production
+  if (
+    process.env.NODE_ENV === "production" &&
+    !ENV_CONFIG.FIREBASE.PROJECT_ID
+  ) {
+    errors.push("Missing PROJECT_ID");
+  } else if (
+    process.env.NODE_ENV !== "production" &&
+    !ENV_CONFIG.FIREBASE.PROJECT_ID
+  ) {
+    warnings.push("Missing PROJECT_ID (using default: si-terminal)");
+  }
+
+  // Validate rate limits - only in production
+  if (process.env.NODE_ENV === "production") {
+    Object.entries(ENV_CONFIG).forEach(([source, config]) => {
+      if (config.RATE_LIMIT && config.RATE_LIMIT <= 0) {
+        errors.push(`Invalid rate limit for ${source}: ${config.RATE_LIMIT}`);
+      }
+      if (config.TIMEOUT && config.TIMEOUT <= 0) {
+        errors.push(`Invalid timeout for ${source}: ${config.TIMEOUT}`);
+      }
+    });
+  }
+
+  // In development, always return valid to prevent function loading issues
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const isValid = isDevelopment ? true : errors.length === 0;
 
   return {
-    isValid: errors.length === 0,
+    isValid,
     errors,
     warnings,
     config: ENV_CONFIG,

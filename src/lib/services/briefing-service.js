@@ -29,6 +29,9 @@ import {
 // Firebase Functions URLs (will be updated when deployed)
 const FUNCTIONS_BASE_URL = "https://us-central1-si-terminal.cloudfunctions.net";
 
+// Local development URL for emulator
+const LOCAL_FUNCTIONS_URL = "http://localhost:5001/si-terminal/us-central1";
+
 /**
  * Get personalized briefing for a user
  * @param {Object} userProfile - User profile
@@ -44,16 +47,34 @@ export async function getPersonalizedBriefing(userProfile) {
     // Prepare profile for user intelligence layer
     const preparedProfile = prepareProfileForIntelligence(savedProfile);
 
-    // Call Firebase Function for user intelligence processing
-    const response = await fetch(`${FUNCTIONS_BASE_URL}/getUserBriefing`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userProfile: preparedProfile,
-      }),
-    });
+    // Try to call Firebase Function for user intelligence processing
+    // First try local emulator, then production
+    let response;
+    let functionsUrl = LOCAL_FUNCTIONS_URL;
+
+    try {
+      response = await fetch(`${functionsUrl}/getUserBriefing`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userProfile: preparedProfile,
+        }),
+      });
+    } catch (localError) {
+      console.log("Local emulator not available, trying production...");
+      functionsUrl = FUNCTIONS_BASE_URL;
+      response = await fetch(`${functionsUrl}/getUserBriefing`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userProfile: preparedProfile,
+        }),
+      });
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -82,7 +103,17 @@ export async function getPersonalizedBriefing(userProfile) {
   } catch (error) {
     console.error("Error getting personalized briefing:", error);
 
-    // Return fallback data
+    // Check if it's a network error (functions not available)
+    if (error.name === "TypeError" && error.message.includes("fetch")) {
+      console.log("Firebase Functions not available, using fallback data");
+      return {
+        success: false,
+        error: "Firebase Functions not available - using demo data",
+        fallbackData: getFallbackBriefing(),
+      };
+    }
+
+    // Return fallback data for other errors
     return {
       success: false,
       error: error.message,
@@ -260,7 +291,14 @@ export async function getRecentBriefings(userId, limit = 10) {
  */
 export async function getSystemHealth() {
   try {
-    const response = await fetch(`${FUNCTIONS_BASE_URL}/getHealth`);
+    // Try local emulator first
+    let response;
+    try {
+      response = await fetch(`${LOCAL_FUNCTIONS_URL}/health`);
+    } catch (localError) {
+      console.log("Local emulator not available, trying production...");
+      response = await fetch(`${FUNCTIONS_BASE_URL}/health`);
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -270,9 +308,10 @@ export async function getSystemHealth() {
   } catch (error) {
     console.error("Error getting system health:", error);
     return {
-      status: "error",
-      error: error.message,
+      status: "offline",
+      error: "Firebase Functions not available",
       timestamp: new Date().toISOString(),
+      message: "Running in demo mode with fallback data",
     };
   }
 }
@@ -285,28 +324,81 @@ function getFallbackBriefing() {
   return {
     briefings: [
       {
-        id: "fallback-1",
-        title: "Welcome to Franklin Terminal",
+        id: "demo-1",
+        title: "Federal Reserve Signals Potential Rate Cuts in Q2 2024",
         summary:
-          "Your personalized political intelligence platform is being set up. Check back soon for your first briefing.",
+          "The Federal Reserve's latest meeting minutes reveal growing consensus among policymakers for potential interest rate cuts beginning in the second quarter of 2024. This could significantly impact investment portfolios and tech sector valuations.",
         date: new Date().toISOString(),
-        source: "system",
-        relevance: "general",
-        stakeAreas: ["general"],
+        source: "Federal Reserve",
+        relevance: "high",
+        stakeAreas: ["Investment Portfolio", "Career & Industry"],
+        category: "Economic Policy",
+        impact: "High",
       },
       {
-        id: "fallback-2",
-        title: "System Status",
+        id: "demo-2",
+        title: "EU AI Act Implementation Timeline Announced",
         summary:
-          "Our AI is learning your preferences. Your first personalized briefing will be available shortly.",
-        date: new Date().toISOString(),
-        source: "system",
-        relevance: "general",
-        stakeAreas: ["general"],
+          "European Union officials have released the implementation timeline for the AI Act, with compliance requirements beginning in 2024. This will affect tech companies operating in Europe and may set global standards for AI regulation.",
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        source: "European Commission",
+        relevance: "high",
+        stakeAreas: ["Career & Industry", "Personal Values"],
+        category: "Technology Regulation",
+        impact: "Medium",
+      },
+      {
+        id: "demo-3",
+        title: "Climate Summit Agreement Reached on Carbon Markets",
+        summary:
+          "Global leaders have agreed on new carbon market mechanisms at the latest climate summit. This agreement could reshape investment strategies and corporate sustainability initiatives worldwide.",
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        source: "UN Climate Summit",
+        relevance: "medium",
+        stakeAreas: ["Investment Portfolio", "Personal Values"],
+        category: "Environmental Policy",
+        impact: "Medium",
+      },
+      {
+        id: "demo-4",
+        title: "Tech Sector Earnings Exceed Expectations",
+        summary:
+          "Major technology companies have reported stronger-than-expected earnings, driven by AI adoption and cloud services growth. This positive performance is boosting market sentiment and tech stock valuations.",
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        source: "Market Reports",
+        relevance: "high",
+        stakeAreas: ["Investment Portfolio"],
+        category: "Economic Policy",
+        impact: "High",
+      },
+      {
+        id: "demo-5",
+        title: "Remote Work Policy Changes at Major Corporations",
+        summary:
+          "Several Fortune 500 companies have announced updated remote work policies, with many requiring partial office returns. This shift could impact real estate markets and commuting patterns.",
+        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days ago
+        source: "Corporate Announcements",
+        relevance: "medium",
+        stakeAreas: ["Career & Industry"],
+        category: "Labor Policy",
+        impact: "Medium",
+      },
+      {
+        id: "demo-6",
+        title: "Digital Currency Regulations Proposed",
+        summary:
+          "New regulatory framework for digital currencies has been proposed by financial authorities. This could affect cryptocurrency markets and blockchain technology adoption in traditional finance.",
+        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+        source: "Financial Authorities",
+        relevance: "medium",
+        stakeAreas: ["Investment Portfolio", "Career & Industry"],
+        category: "Financial Regulation",
+        impact: "Medium",
       },
     ],
     timestamp: new Date().toISOString(),
     isFallback: true,
+    message: "Demo data - Firebase Functions not available",
   };
 }
 
