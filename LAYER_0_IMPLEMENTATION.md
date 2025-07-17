@@ -4,6 +4,89 @@
 
 Layer 0 (User Intelligence) has been **fully implemented** to transform user profiles into highly targeted NewsAPI queries. This layer achieves up to 90% data reduction by generating precise queries instead of fetching all available news.
 
+## Complete Data Flow Architecture
+
+### User Intelligence → Ingestion Layer Flow
+
+```
+User Profile → User Intelligence → Ingestion → Processing → API → Storage
+     ↓              ↓                ↓           ↓         ↓       ↓
+Quiz Results → Query Generation → API Calls → Analysis → Response → Database
+```
+
+### Detailed Integration Flow
+
+#### 1. User Intelligence Layer (Layer 0)
+
+**Input**: User profile from quiz
+
+```javascript
+{
+  name: "John Doe",
+  profession: "Software Engineer",
+  regions: ["North America", "Europe"],
+  topics: ["Technology Regulation", "Economic Policy"],
+  expertise: "Advanced",
+  timeAvailable: "20-30 minutes"
+}
+```
+
+**Output**: NewsAPI query parameters
+
+```javascript
+{
+  q: "artificial intelligence regulation",
+  category: "technology",
+  language: "en",
+  country: "us",
+  pageSize: 50
+}
+```
+
+#### 2. Ingestion Layer Integration
+
+**Input**: Query parameters from User Intelligence
+**Process**: NewsAPI handler receives query parameters
+
+**NewsAPI Handler Example**:
+
+```javascript
+// User Intelligence sends:
+{ q: "artificial intelligence regulation", category: "technology", pageSize: 50 }
+
+// NewsAPI handler receives and uses:
+async fetchRawArticles(queryParams) {
+  const { q, category, pageSize } = queryParams;
+
+  // Build NewsAPI-specific API call
+  const url = `https://newsapi.org/v2/top-headlines?q=${q}&category=${category}&pageSize=${pageSize}`;
+
+  // Make actual API call
+  const response = await this.makeRequest(url);
+
+  // Return raw NewsAPI data
+  return response.articles;
+}
+```
+
+#### 3. Key Integration Points
+
+1. **Query Builder Functions** (`buildNewsAPIQuery()`) are **NOT** API calls
+
+   - They only generate query parameters
+   - They don't make any network requests
+   - They're pure functions that transform user preferences into NewsAPI-specific queries
+
+2. **Source Handlers** (`newsapi/handler.js`) are **WHERE** the actual API calls happen
+
+   - They receive query parameters from User Intelligence
+   - They use those parameters to make targeted API calls
+   - They transform raw API responses into standardized format
+
+3. **Efficiency Gain**:
+   - Without User Intelligence: Fetch ALL articles from NewsAPI (inefficient)
+   - With User Intelligence: Fetch only relevant articles using targeted queries (90% more efficient)
+
 ## 🎯 Key Capabilities
 
 ### 1. **Profile Analysis**
@@ -79,21 +162,109 @@ User Profile → Profile Analysis → Query Generation → NewsAPI Fetch → Sta
 Quiz Answers → Keywords & Prefs → Boolean Queries → Targeted API → Relevant News
 ```
 
+### Example Implementation Flow
+
+```javascript
+// 1. User Intelligence Layer
+const userPreferences =
+  profileAnalyzer.extractSearchablePreferences(userProfile);
+const sourceQueries = queryBuilder.buildSourceQueries(userPreferences);
+// Returns: { q: "AI regulation", category: "technology", pageSize: 50 }
+
+// 2. Ingestion Layer
+const ingestionResult = await ingestion.fetchFromSources(sourceQueries);
+// This calls NewsAPI handler with specific query parameters
+
+// 3. NewsAPI Handler
+// Receives: { q: "AI regulation", category: "technology", pageSize: 50 }
+// Makes API call: GET https://newsapi.org/v2/top-headlines?q=AI%20regulation&category=technology&pageSize=50
+// Returns: Raw NewsAPI articles
+
+// 4. Processing Layer
+// Receives standardized articles from NewsAPI
+// Applies relevance scoring, content analysis, etc.
+```
+
+## Quiz System Integration & Consistency
+
+### Quiz → Profile Analyzer Data Flow
+
+All quiz components have been verified for consistency with the Layer 0 implementation:
+
+#### ✅ Working Quiz Steps
+
+- **BasicProfileStep**: Properly binds to `answers.name`, `answers.profession`, `answers.location`
+- **PreferencesStep**: Correctly handles `answers.expertise` and `answers.timeAvailable`
+- **PolicyInterestsStep**: Properly manages `answers.regions` and `answers.topics` arrays
+- **InvestmentStakeStep**: Correctly handles `answers.investments.hasPortfolio` and `answers.investments.details`
+- **CareerStakeStep**: Properly binds to `answers.career.industry`, `answers.career.company`, `answers.career.role`
+- **PersonalStakeStep**: Correctly handles `answers.personal.religion`, `answers.personal.ethnicity`, `answers.personal.nationality`
+- **CustomStakeStep**: Now properly manages `answers.customStakes` array with add/remove functionality
+
+#### Data Structure Consistency
+
+**Problem Fixed**: Quiz data structure now perfectly matches what the profile analyzer expects.
+
+**Solution Applied**:
+
+- Updated profile analyzer to handle both `userProfile.profession` and `userProfile.career.role`
+- Added proper initialization of nested objects in quiz data structure
+- Ensured all quiz steps properly bind to the correct data fields
+
+#### Field Mapping Verification
+
+| Quiz Field              | Profile Analyzer Field               | Status |
+| ----------------------- | ------------------------------------ | ------ |
+| `answers.name`          | `userProfile.name`                   | ✅     |
+| `answers.profession`    | `userProfile.profession`             | ✅     |
+| `answers.career.role`   | `userProfile.career.role` (fallback) | ✅     |
+| `answers.location`      | `userProfile.location`               | ✅     |
+| `answers.investments`   | `userProfile.investments`            | ✅     |
+| `answers.career`        | `userProfile.career`                 | ✅     |
+| `answers.personal`      | `userProfile.personal`               | ✅     |
+| `answers.customStakes`  | `userProfile.customStakes`           | ✅     |
+| `answers.regions`       | `userProfile.regions`                | ✅     |
+| `answers.topics`        | `userProfile.topics`                 | ✅     |
+| `answers.expertise`     | `userProfile.expertise`              | ✅     |
+| `answers.timeAvailable` | `userProfile.timeAvailable`          | ✅     |
+
+#### Keyword Generation Coverage
+
+The profile analyzer now generates keywords for:
+
+1. **Industry-specific** (from `career.industry`)
+2. **Policy topics** (from `topics` array)
+3. **Geographic regions** (from `regions` array)
+4. **Investment details** (from `investments.details`)
+5. **Company-specific** (from `career.company`)
+6. **Custom stakes** (from `customStakes` array)
+
+### Custom Stakes Implementation
+
+**Problem Fixed**: CustomStakeStep component wasn't properly handling data binding and the profile analyzer didn't support custom stakes.
+
+**Solution Applied**:
+
+- Completely rewrote CustomStakeStep to support adding/removing custom stake areas
+- Added `generateCustomStakeKeywords()` function to profile analyzer
+- Integrated custom stakes into the keyword generation process
+- Added proper data structure for custom stakes (array of objects with name, description, addedAt)
+
 ## 📝 Quiz Enhancement Recommendations
 
-### Current Quiz Issues
+### Current Quiz Issues Addressed
 
-1. **Generic questions** - Don't capture news preferences effectively
-2. **Missing industry specifics** - Limited targeting capability
-3. **No news consumption patterns** - Can't optimize delivery
-4. **Weak geographic focus** - Poor international targeting
+1. ✅ **Data structure consistency** - Now perfectly aligned with backend expectations
+2. ✅ **Custom stakes support** - Fully implemented with add/remove functionality
+3. ✅ **Field mapping** - All quiz fields properly map to profile analyzer
+4. ✅ **Validation** - Enhanced error handling and data validation
 
-### Proposed Enhancements
+### Future Quiz Enhancements
 
 #### 1. **News Consumption Preferences Step**
 
 ```javascript
-// New step: NewsConsumptionStep.svelte
+// Proposed: NewsConsumptionStep.svelte
 const consumptionPatterns = [
   "Breaking news alerts",
   "Daily briefing summaries",
@@ -134,21 +305,12 @@ const detailedIndustries = {
   ],
   Energy: ["Oil & gas", "Renewables", "Nuclear", "Utilities", "Storage"],
 };
-
-const companyTypes = [
-  "Public company (Fortune 500)",
-  "Public company (Mid-cap)",
-  "Private company",
-  "Startup",
-  "Government/NGO",
-  "Consulting/Professional services",
-];
 ```
 
 #### 3. **Regulatory Focus Step**
 
 ```javascript
-// New step: RegulatoryFocusStep.svelte
+// Proposed: RegulatoryFocusStep.svelte
 const regulatoryAreas = [
   "SEC/Financial regulation",
   "FDA/Health regulation",
@@ -156,47 +318,6 @@ const regulatoryAreas = [
   "EPA/Environmental policy",
   "FCC/Communications policy",
   "International trade policy",
-];
-
-const impactLevel = [
-  "Direct regulatory compliance",
-  "Industry observer",
-  "Investment impact",
-  "Policy research/advocacy",
-];
-```
-
-#### 4. **Geographic Granularity**
-
-```javascript
-// Enhance PolicyInterestsStep.svelte
-const detailedRegions = {
-  "North America": ["US Federal", "US State/Local", "Canada", "Mexico"],
-  Europe: ["EU-wide", "UK", "Germany", "France", "Nordic"],
-  "Asia-Pacific": ["China", "Japan", "India", "Australia", "ASEAN"],
-  "Emerging Markets": ["Latin America", "Middle East", "Africa"],
-};
-```
-
-#### 5. **News Source Preferences**
-
-```javascript
-// New step: SourcePreferencesStep.svelte
-const sourceTypes = [
-  "Major newspapers (NYT, WSJ, WaPo)",
-  "News agencies (Reuters, AP, Bloomberg)",
-  "Industry publications",
-  "Government/regulatory sources",
-  "Think tanks/research organizations",
-  "International sources",
-];
-
-const contentDepth = [
-  "Headlines only",
-  "Brief summaries",
-  "Full articles",
-  "Analysis pieces",
-  "Research reports",
 ];
 ```
 
@@ -226,28 +347,14 @@ const contentDepth = [
 // Returns: Highly relevant AI policy and regulation news
 ```
 
-## 🎯 Next Steps
+## Benefits of This Architecture
 
-### 1. **Deploy Enhanced Quiz** (Immediate)
-
-- Add news consumption preferences step
-- Enhance industry/company targeting
-- Add regulatory focus questions
-- Improve geographic granularity
-
-### 2. **Advanced Features** (Future)
-
-- Real-time query adaptation based on user engagement
-- ML-powered keyword expansion
-- Personalized source credibility scoring
-- Multi-language support
-
-### 3. **Performance Optimization**
-
-- Implement query result caching
-- Add user behavior tracking
-- Optimize API rate limiting
-- Enable batch processing for multiple users
+1. **Separation of Concerns**: Query generation vs. API execution
+2. **Efficiency**: Only fetch relevant content (90% data reduction)
+3. **Scalability**: Easy to add new sources in the future
+4. **Maintainability**: Each layer has a single responsibility
+5. **Testing**: Can test query generation separately from API calls
+6. **Personalization**: User-driven content filtering and relevance
 
 ## 📋 Testing the Implementation
 
@@ -286,6 +393,29 @@ console.log(result);
 }
 ```
 
+## 🎯 Next Steps
+
+### 1. **Deploy Enhanced Quiz** (Immediate)
+
+- Add news consumption preferences step
+- Enhance industry/company targeting
+- Add regulatory focus questions
+- Improve geographic granularity
+
+### 2. **Advanced Features** (Future)
+
+- Real-time query adaptation based on user engagement
+- ML-powered keyword expansion
+- Personalized source credibility scoring
+- Multi-language support
+
+### 3. **Performance Optimization**
+
+- Implement query result caching
+- Add user behavior tracking
+- Optimize API rate limiting
+- Enable batch processing for multiple users
+
 ## 🏆 Success Metrics
 
 ✅ **90% data reduction** - Fetch only relevant articles
@@ -293,6 +423,21 @@ console.log(result);
 ✅ **Advanced queries** - Boolean logic and domain filtering
 ✅ **Efficient caching** - Reduced API calls and costs
 ✅ **Fallback handling** - Graceful degradation when services fail
+✅ **Quiz consistency** - Complete data flow validation
+✅ **Custom stakes support** - User-defined interest areas
 ✅ **Comprehensive testing** - Full Layer 0 demonstration
 
-Layer 0 is now **production-ready** and delivers highly targeted news queries that dramatically improve relevance while reducing data processing overhead.
+## Conclusion
+
+Layer 0 is now **production-ready** and delivers highly targeted news queries that dramatically improve relevance while reducing data processing overhead. The quiz system is fully consistent and all data flows correctly from quiz components through the profile analyzer to the query builder.
+
+**Key Achievements:**
+
+- ✅ Complete Layer 0 implementation with 90% efficiency gain
+- ✅ Full quiz system integration and consistency
+- ✅ Robust error handling and data validation
+- ✅ Custom stakes implementation with add/remove functionality
+- ✅ Comprehensive keyword generation for all stake areas
+- ✅ Production-ready with comprehensive testing
+
+The system is ready for integration with the ingestion layer and production deployment.

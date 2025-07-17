@@ -37,12 +37,51 @@ cd functions && npm install && cd ..
 
 ### Environment Setup
 
+#### Project Structure
+
+```
+si-app/                    # Root project (SvelteKit frontend)
+├── .env                   # Frontend environment variables
+└── functions/             # Firebase Functions (backend)
+    └── .env               # Backend environment variables (separate!)
+```
+
+#### Frontend Environment (.env in root)
+
+```bash
+# Firebase configuration (from Firebase Console)
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=si-terminal.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=si-terminal
+VITE_FIREBASE_STORAGE_BUCKET=si-terminal.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=19947220100
+VITE_FIREBASE_APP_ID=1:19947220100:web:d22d6b25b674896eeee6d1
+
+# App settings
+VITE_APP_NAME=Franklin Terminal
+VITE_APP_VERSION=1.0.0
+```
+
+#### Backend Environment (.env in functions/)
+
+```bash
+# NewsAPI (required for MVP)
+NEWSAPI_API_KEY=your_newsapi_key_here
+NEWSAPI_BASE_URL=https://newsapi.org/v2
+
+# Configuration
+NODE_ENV=development
+LOG_LEVEL=info
+CACHE_TTL=3600
+```
+
+#### Setup Script
+
 ```bash
 # Set up environment variables for both frontend and backend
 ./setup-env.sh
 
 # Update the generated .env files with your actual API keys
-# See ENVIRONMENT_SETUP.md for detailed instructions
 ```
 
 ### Firebase Setup
@@ -75,10 +114,11 @@ si-app/
 │   └── app.css                  # Global styles
 ├── functions/
 │   └── src/layers/              # Backend layers
-│       ├── ingestion/           # Data ingestion
-│       ├── processing/          # Data processing
-│       ├── api/                 # API endpoints
-│       └── storage/             # Data storage
+│       ├── user-intelligence/   # Layer 0: User profile analysis
+│       ├── ingestion/           # Layer 1: Data ingestion
+│       ├── processing/          # Layer 2: Data processing
+│       ├── api/                 # Layer 3: API endpoints
+│       └── storage/             # Layer 4: Data storage
 ├── firebase.json                # Firebase config
 └── package.json
 ```
@@ -147,6 +187,24 @@ const firebaseConfig = {
 - `/quiz` - Stakeholder assessment
 - `/briefings` - Daily briefings
 - `/test` - Development testing
+
+## Environment Variables
+
+### Important Notes
+
+1. **Never commit `.env` files** - they're in `.gitignore`
+2. **Frontend variables must start with `VITE_`** to be accessible in SvelteKit
+3. **Backend variables are accessed via `process.env`** in Node.js
+4. **Firebase Functions have their own environment scope** - separate from frontend
+
+### Production Deployment
+
+For production, set environment variables in Firebase:
+
+```bash
+firebase functions:config:set newsapi.key="your_newsapi_key"
+firebase functions:config:set general.environment="production"
+```
 
 ## Next Steps
 
